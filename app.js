@@ -48,6 +48,11 @@ const DOM = {
   modalSubtitle: document.getElementById('modal-subtitle'),
   modalScriptureContainer: document.getElementById('modal-scripture-container'),
   modalScripture: document.getElementById('modal-scripture'),
+  modalPdfContainer: document.getElementById('modal-pdf-container'),
+  modalPdfTitle: document.getElementById('modal-pdf-title'),
+  modalPdfDesc: document.getElementById('modal-pdf-desc'),
+  modalPdfBtn: document.getElementById('modal-pdf-btn'),
+  modalPdfBtnText: document.getElementById('modal-pdf-btn-text'),
   modalSynopsis: document.getElementById('modal-synopsis'),
   modalChaptersContainer: document.getElementById('modal-chapters-container'),
   modalChaptersList: document.getElementById('modal-chapters-list'),
@@ -172,6 +177,7 @@ function createCardHTML(ep, category) {
         <div class="card-meta-row">
           <span class="card-badge">${ep.badge || 'HD'}</span>
           <span class="card-tag">Episódio ${ep.number}</span>
+          ${ep.pdfMaterial ? `<span class="card-pdf-indicator">📄 PDF</span>` : ''}
         </div>
         <h3 class="card-title">${ep.title}</h3>
         <p class="card-synopsis">${ep.synopsis}</p>
@@ -212,6 +218,17 @@ function openPlayerModal(episode, category, startTime = 0) {
     DOM.modalScripture.textContent = episode.scripture;
   } else {
     DOM.modalScriptureContainer.style.display = 'none';
+  }
+
+  // PDF Material Download Section
+  if (episode.pdfMaterial) {
+    DOM.modalPdfContainer.style.display = 'flex';
+    DOM.modalPdfTitle.textContent = episode.pdfMaterial.title;
+    DOM.modalPdfDesc.textContent = episode.pdfMaterial.subtitle;
+    DOM.modalPdfBtn.href = episode.pdfMaterial.downloadUrl;
+    DOM.modalPdfBtnText.textContent = episode.pdfMaterial.buttonLabel || 'Baixar Devocional (PDF)';
+  } else {
+    DOM.modalPdfContainer.style.display = 'none';
   }
 
   // Chapters & Timestamps

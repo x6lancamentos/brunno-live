@@ -44,7 +44,14 @@ export const CATALOG = {
             { time: "08:30", label: "O significado profético de Sucot", seconds: 510 },
             { time: "15:45", label: "Desarmando defesas: O convite ao colo do Pai", seconds: 945 },
             { time: "22:10", label: "Oração inicial e consagração", seconds: 1330 }
-          ]
+          ],
+          pdfMaterial: {
+            title: "Devocional em PDF • Dia 00: Marco Zero",
+            subtitle: "Guia profético com versículos comentados, decretos de desaceleração e espaço para suas anotações espirituais.",
+            downloadUrl: "https://chat.whatsapp.com/CFHnQ4R22By3bMTQ7qT2V7",
+            buttonLabel: "Baixar PDF no Grupo VIP",
+            fileName: "Devocional_Tabernaculos_Dia_00.pdf"
+          }
         },
         {
           id: "ep-dia01",
@@ -65,7 +72,14 @@ export const CATALOG = {
             { time: "18:30", label: "A graça que se aperfeiçoa na sua fraqueza", seconds: 1110 },
             { time: "25:10", label: "Clamor profético pela quebra do desamparo familiar", seconds: 1510 },
             { time: "34:00", label: "Bênção e encerramento", seconds: 2040 }
-          ]
+          ],
+          pdfMaterial: {
+            title: "Devocional em PDF • Dia 01: O Decreto da Cobertura",
+            subtitle: "Estudo sobre o fim da orfandade, a revelação de Sucot e o manto do Salmo 91 sobre sua casa.",
+            downloadUrl: "https://chat.whatsapp.com/CFHnQ4R22By3bMTQ7qT2V7",
+            buttonLabel: "Baixar PDF no Grupo VIP",
+            fileName: "Devocional_Tabernaculos_Dia_01.pdf"
+          }
         },
         {
           id: "ep-dia02",
@@ -86,7 +100,14 @@ export const CATALOG = {
             { time: "19:30", label: "Jesus, a nossa Rocha ferida: Fim da mentalidade de escassez", seconds: 1170 },
             { time: "28:40", label: "De consumidor de copo a manancial transbordante", seconds: 1720 },
             { time: "38:00", label: "Intercessão pelas finanças, negócios e casamentos", seconds: 2280 }
-          ]
+          ],
+          pdfMaterial: {
+            title: "Devocional em PDF • Dia 02: A Rocha Ferida",
+            subtitle: "Ativação profética contra a escassez, cerimônia das águas e versículos de destravar financeiro.",
+            downloadUrl: "https://chat.whatsapp.com/CFHnQ4R22By3bMTQ7qT2V7",
+            buttonLabel: "Baixar PDF no Grupo VIP",
+            fileName: "Devocional_Tabernaculos_Dia_02.pdf"
+          }
         },
         {
           id: "ep-dia03",
@@ -107,7 +128,14 @@ export const CATALOG = {
             { time: "21:40", label: "A Coluna de Fogo: Aquecimento contra a morte e luz", seconds: 1300 },
             { time: "30:15", label: "Rompendo crises de pânico, insônia e paralisia", seconds: 1815 },
             { time: "41:10", label: "Oração profética de clareza e quebra de amarras", seconds: 2470 }
-          ]
+          ],
+          pdfMaterial: {
+            title: "Devocional em PDF • Dia 03: A Coluna de Fogo",
+            subtitle: "Quebrando amarras mentais, insônia e ansiedade com a Luz do Mundo.",
+            downloadUrl: "https://chat.whatsapp.com/CFHnQ4R22By3bMTQ7qT2V7",
+            buttonLabel: "Baixar PDF no Grupo VIP",
+            fileName: "Devocional_Tabernaculos_Dia_03.pdf"
+          }
         },
         {
           id: "ep-dia04",
@@ -128,7 +156,14 @@ export const CATALOG = {
             { time: "20:50", label: "Mesa perante os opressores: Honra no lugar da afronta", seconds: 1250 },
             { time: "29:30", label: "Curando a mente da autossuficiência e esgotamento", seconds: 1770 },
             { time: "39:00", label: "Intercessão contra ansiedade, depressão e dívidas", seconds: 2340 }
-          ]
+          ],
+          pdfMaterial: {
+            title: "Devocional em PDF • Dia 04: O Maná Oculto",
+            subtitle: "Exercícios de descanso, desintoxicação de controle e a mesa do Salmo 23.",
+            downloadUrl: "https://chat.whatsapp.com/CFHnQ4R22By3bMTQ7qT2V7",
+            buttonLabel: "Baixar PDF no Grupo VIP",
+            fileName: "Devocional_Tabernaculos_Dia_04.pdf"
+          }
         },
         {
           id: "ep-dia05",
@@ -151,7 +186,14 @@ export const CATALOG = {
             { time: "30:40", label: "A revelação de Jeová Rafá: O Senhor que te sara", seconds: 1840 },
             { time: "36:20", label: "O caminho para Elim: 12 fontes e descanso", seconds: 2180 },
             { time: "46:50", label: "Oração intercessória por laudos médicos e casas", seconds: 2810 }
-          ]
+          ],
+          pdfMaterial: {
+            title: "Devocional em PDF • Dia 05: As Águas de Mara",
+            subtitle: "Roteiro de cura de feridas emocionais, o lenho de Cristo e a transição para Elim.",
+            downloadUrl: "https://chat.whatsapp.com/CFHnQ4R22By3bMTQ7qT2V7",
+            buttonLabel: "Baixar PDF no Grupo VIP",
+            fileName: "Devocional_Tabernaculos_Dia_05.pdf"
+          }
         }
       ]
     },

@@ -1040,6 +1040,95 @@ body {
   margin-bottom: 1.5rem;
 }
 
+/* Material Complementar (PDF Devocional) */
+.material-pdf-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.16) 0%, rgba(22, 22, 30, 0.95) 100%);
+  border: 1px solid var(--gold-primary);
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.6), 0 0 15px var(--gold-glow);
+  position: relative;
+  overflow: hidden;
+}
+
+.material-pdf-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--gold-gradient);
+}
+
+.pdf-icon-badge {
+  width: 52px;
+  height: 52px;
+  border-radius: 10px;
+  background: var(--gold-gradient);
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 0 15px var(--gold-glow);
+}
+
+.pdf-info {
+  flex-grow: 1;
+}
+
+.pdf-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.pdf-title {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.25rem;
+}
+
+.pdf-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+.btn-download-pdf {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  white-space: nowrap;
+  padding: 0.65rem 1.3rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+/* Card PDF Badge */
+.card-pdf-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: rgba(212, 175, 55, 0.12);
+  border: 1px solid var(--gold-border);
+  color: var(--gold-light);
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.15rem 0.45rem;
+  border-radius: 3px;
+}
+
 .scripture-icon {
   font-size: 1.5rem;
 }
@@ -1407,6 +1496,18 @@ body {
   .modal-header-row {
     flex-direction: column;
     gap: 1rem;
+  }
+
+  .material-pdf-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .btn-download-pdf {
+    width: 100%;
+    justify-content: center;
   }
 
   .footer-links {
