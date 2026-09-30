@@ -48,8 +48,8 @@ export const CATALOG = {
           pdfMaterial: {
             title: "Devocional em PDF • Dia 00: Marco Zero",
             subtitle: "Guia profético com versículos comentados, decretos de desaceleração e espaço para suas anotações espirituais.",
-            downloadUrl: "https://chat.whatsapp.com/CFHnQ4R22By3bMTQ7qT2V7",
-            buttonLabel: "Baixar PDF no Grupo VIP",
+            downloadUrl: "https://drive.google.com/drive/folders/1UVu-7wjETkFTyvP1agwowV-8UdZ_B_Qo",
+            buttonLabel: "Baixar Devocional no Google Drive",
             fileName: "Devocional_Tabernaculos_Dia_00.pdf"
           }
         },
@@ -76,8 +76,8 @@ export const CATALOG = {
           pdfMaterial: {
             title: "Devocional em PDF • Dia 01: O Decreto da Cobertura",
             subtitle: "Estudo sobre o fim da orfandade, a revelação de Sucot e o manto do Salmo 91 sobre sua casa.",
-            downloadUrl: "https://chat.whatsapp.com/CFHnQ4R22By3bMTQ7qT2V7",
-            buttonLabel: "Baixar PDF no Grupo VIP",
+            downloadUrl: "https://drive.google.com/drive/folders/1UVu-7wjETkFTyvP1agwowV-8UdZ_B_Qo",
+            buttonLabel: "Baixar Devocional no Google Drive",
             fileName: "Devocional_Tabernaculos_Dia_01.pdf"
           }
         },
@@ -104,8 +104,8 @@ export const CATALOG = {
           pdfMaterial: {
             title: "Devocional em PDF • Dia 02: A Rocha Ferida",
             subtitle: "Ativação profética contra a escassez, cerimônia das águas e versículos de destravar financeiro.",
-            downloadUrl: "https://chat.whatsapp.com/CFHnQ4R22By3bMTQ7qT2V7",
-            buttonLabel: "Baixar PDF no Grupo VIP",
+            downloadUrl: "https://drive.google.com/drive/folders/1UVu-7wjETkFTyvP1agwowV-8UdZ_B_Qo",
+            buttonLabel: "Baixar Devocional no Google Drive",
             fileName: "Devocional_Tabernaculos_Dia_02.pdf"
           }
         },
@@ -132,8 +132,8 @@ export const CATALOG = {
           pdfMaterial: {
             title: "Devocional em PDF • Dia 03: A Coluna de Fogo",
             subtitle: "Quebrando amarras mentais, insônia e ansiedade com a Luz do Mundo.",
-            downloadUrl: "https://chat.whatsapp.com/CFHnQ4R22By3bMTQ7qT2V7",
-            buttonLabel: "Baixar PDF no Grupo VIP",
+            downloadUrl: "https://drive.google.com/drive/folders/1UVu-7wjETkFTyvP1agwowV-8UdZ_B_Qo",
+            buttonLabel: "Baixar Devocional no Google Drive",
             fileName: "Devocional_Tabernaculos_Dia_03.pdf"
           }
         },
@@ -160,8 +160,8 @@ export const CATALOG = {
           pdfMaterial: {
             title: "Devocional em PDF • Dia 04: O Maná Oculto",
             subtitle: "Exercícios de descanso, desintoxicação de controle e a mesa do Salmo 23.",
-            downloadUrl: "https://chat.whatsapp.com/CFHnQ4R22By3bMTQ7qT2V7",
-            buttonLabel: "Baixar PDF no Grupo VIP",
+            downloadUrl: "https://drive.google.com/drive/folders/1UVu-7wjETkFTyvP1agwowV-8UdZ_B_Qo",
+            buttonLabel: "Baixar Devocional no Google Drive",
             fileName: "Devocional_Tabernaculos_Dia_04.pdf"
           }
         },
@@ -190,8 +190,8 @@ export const CATALOG = {
           pdfMaterial: {
             title: "Devocional em PDF • Dia 05: As Águas de Mara",
             subtitle: "Roteiro de cura de feridas emocionais, o lenho de Cristo e a transição para Elim.",
-            downloadUrl: "https://chat.whatsapp.com/CFHnQ4R22By3bMTQ7qT2V7",
-            buttonLabel: "Baixar PDF no Grupo VIP",
+            downloadUrl: "https://drive.google.com/drive/folders/1UVu-7wjETkFTyvP1agwowV-8UdZ_B_Qo",
+            buttonLabel: "Baixar Devocional no Google Drive",
             fileName: "Devocional_Tabernaculos_Dia_05.pdf"
           }
         }
