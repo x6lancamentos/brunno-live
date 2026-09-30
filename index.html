@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brunno Anastácio LIVE | Catálogo Oficial de Séries e Ministrações</title>
+  <meta name="description" content="Assista às séries e vigílias proféticas com o Pr. Brunno Anastácio. O Deus que se Revela no Deserto, Raízes Familiares, Inteligência Financeira Bíblica e Altar de Oração.">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+
+  <!-- Open Graph / Social Media -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://live.brunnoanastacio.com.br/">
+  <meta property="og:title" content="Brunno Anastácio LIVE | Séries e Ministrações">
+  <meta property="og:description" content="Streaming oficial das jornadas de oração, inteligência bíblica e cura de raízes familiares com Pr. Brunno Anastácio.">
+  <meta property="og:image" content="https://i.ytimg.com/vi/E_K3wxrdliE/hqdefault.jpg">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Header / Navigation Bar -->
+  <header class="navbar" id="navbar">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="#inicio" class="brand-logo" id="brand-logo">
+          <span class="brand-name">BRUNNO ANASTÁCIO</span>
+          <span class="live-pill">LIVE</span>
+        </a>
+        <nav class="nav-menu" id="nav-menu">
+          <a href="#inicio" class="nav-link active" data-filter="all">Início</a>
+          <a href="#deserto" class="nav-link" data-filter="cat-deserto">Tabernáculos</a>
+          <a href="#raizes" class="nav-link" data-filter="cat-raizes">Raízes Familiares</a>
+          <a href="#ifb" class="nav-link" data-filter="cat-ifb">Inteligência Financeira</a>
+          <a href="#minha-lista" class="nav-link" id="nav-my-list" data-filter="my-list">
+            Minha Lista <span class="list-badge" id="list-count">0</span>
+          </a>
+        </nav>
+      </div>
+
+      <div class="nav-right">
+        <!-- Search Bar -->
+        <div class="search-box" id="search-box">
+          <button class="search-btn" id="search-toggle-btn" aria-label="Pesquisar">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </button>
+          <input type="text" id="search-input" class="search-input" placeholder="Buscar por tema, versículo, palavra..." autocomplete="off">
+          <button class="search-clear-btn" id="search-clear-btn" style="display:none;">&times;</button>
+        </div>
+
+        <!-- Altar de Oração CTA -->
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSdSSDbxRA8Kff5dHjIwSEqHht2u-cePAfcgDZrQyypv_BJuhQ/viewform" target="_blank" rel="noopener noreferrer" class="btn-altar">
+          <span class="dove-icon">🕊️</span>
+          <span>Altar de Oração</span>
+        </a>
+
+        <!-- Mobile Menu Toggle -->
+        <button class="mobile-toggle" id="mobile-toggle" aria-label="Abrir Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Hero Billboard -->
+  <section class="hero-billboard" id="inicio">
+    <div class="hero-bg-container">
+      <div class="hero-bg-image" id="hero-bg-image"></div>
+      <div class="hero-vignette-top"></div>
+      <div class="hero-vignette-bottom"></div>
+      <div class="hero-vignette-left"></div>
+    </div>
+
+    <div class="hero-content">
+      <div class="hero-badges">
+        <span class="badge-gold" id="hero-badge">SÉRIE ORIGINAL EXCLUSIVA</span>
+        <span class="badge-outline">4K ULTRA HD</span>
+        <span class="badge-outline">LIVRE</span>
+        <span class="badge-text" id="hero-match">99% Relevante</span>
+      </div>
+
+      <h1 class="hero-title" id="hero-title">O Deus que se Revela no Deserto</h1>
+      <p class="hero-subtitle" id="hero-subtitle">Jornada Profética • Festa dos Tabernáculos (Sucot)</p>
+
+      <p class="hero-synopsis" id="hero-synopsis">
+        O deserto não é o seu cemitério; é o solo sagrado onde Deus arma a tenda d'Ele ao lado da sua. Uma jornada profética com o Pr. Brunno Anastácio para quebrar o espírito de orfandade, vencer a escassez e curar as feridas mais profundas da alma.
+      </p>
+
+      <div class="hero-tags" id="hero-tags">
+        <span class="tag-pill">Tabernáculos</span>
+        <span class="tag-pill">Paternidade</span>
+        <span class="tag-pill">Cura Interior</span>
+        <span class="tag-pill">Prosperidade</span>
+      </div>
+
+      <div class="hero-actions">
+        <button class="btn btn-primary" id="hero-play-btn">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+          <span>Assistir Episódio 1</span>
+        </button>
+
+        <button class="btn btn-secondary" id="hero-info-btn">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+          </svg>
+          <span>Mais Informações</span>
+        </button>
+
+        <button class="btn btn-icon-round" id="hero-add-list-btn" title="Adicionar à Minha Lista">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Filter & Quick Tabs -->
+  <section class="filter-bar">
+    <div class="filter-container">
+      <span class="filter-label">Explorar por Série:</span>
+      <div class="filter-pills" id="filter-pills">
+        <button class="pill-btn active" data-filter="all">Todos os Títulos</button>
+        <button class="pill-btn" data-filter="cat-deserto">Tabernáculos (7 Dias)</button>
+        <button class="pill-btn" data-filter="cat-raizes">Raízes Familiares</button>
+        <button class="pill-btn" data-filter="cat-ifb">Inteligência Financeira</button>
+        <button class="pill-btn" data-filter="my-list">⭐ Minha Lista</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Search Results Bar (when searching) -->
+  <section class="search-results-section" id="search-results-section" style="display: none;">
+    <div class="section-header">
+      <h2 class="section-title">Resultados da Busca: <span class="search-term-highlight" id="search-term-display"></span></h2>
+      <button class="btn-text" id="clear-search-view">Limpar Busca</button>
+    </div>
+    <div class="episodes-grid" id="search-grid"></div>
+  </section>
+
+  <!-- Netflix Catalog Rows -->
+  <main class="catalog-container" id="catalog-container">
+    <!-- Rows will be dynamically rendered from catalog.js -->
+  </main>
+
+  <!-- Floating Community Bar -->
+  <aside class="community-banner">
+    <div class="community-content">
+      <div class="community-text">
+        <span class="live-dot"></span>
+        <strong>Comunidade Oficial no WhatsApp:</strong> Receba os devocionais diários em PDF e links das vigílias.
+      </div>
+      <div class="community-actions">
+        <a href="https://chat.whatsapp.com/CFHnQ4R22By3bMTQ7qT2V7" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">
+          Entrar no WhatsApp
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Netflix Modal Player & Details Dialog -->
+  <div class="modal-backdrop" id="modal-backdrop" aria-hidden="true">
+    <div class="modal-window" role="dialog" aria-modal="true" id="modal-window">
+      <button class="modal-close" id="modal-close" aria-label="Fechar Modal">&times;</button>
+
+      <!-- Video Player Frame -->
+      <div class="video-player-wrapper">
+        <div class="video-responsive">
+          <iframe id="youtube-player" src="" title="YouTube Video Player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        </div>
+      </div>
+
+      <!-- Video Info & Controls -->
+      <div class="modal-body">
+        <div class="modal-header-row">
+          <div class="modal-title-col">
+            <div class="modal-badges">
+              <span class="badge-gold" id="modal-day">Dia 00</span>
+              <span class="badge-outline" id="modal-duration">40 min</span>
+              <span class="badge-outline">HD</span>
+              <span class="badge-text" id="modal-category">Festa dos Tabernáculos</span>
+            </div>
+            <h2 class="modal-title" id="modal-title">Título do Episódio</h2>
+            <p class="modal-subtitle" id="modal-subtitle">Subtítulo ou Foco da Mensagem</p>
+          </div>
+
+          <div class="modal-actions-col">
+            <button class="btn-modal-action" id="modal-add-list-btn">
+              <span class="action-icon">＋</span>
+              <span class="action-text">Minha Lista</span>
+            </button>
+            <button class="btn-modal-action" id="modal-share-btn">
+              <span class="action-icon">↗</span>
+              <span class="action-text">Compartilhar</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Scripture Highlight -->
+        <div class="scripture-card" id="modal-scripture-container">
+          <div class="scripture-icon">📖</div>
+          <div class="scripture-content">
+            <strong class="scripture-label">TEXTO BASE:</strong>
+            <p class="scripture-text" id="modal-scripture">Levítico 23:42-43</p>
+          </div>
+        </div>
+
+        <!-- Synopsis -->
+        <div class="synopsis-block">
+          <p id="modal-synopsis">Descrição completa da mensagem...</p>
+        </div>
+
+        <!-- Timestamps / Chapters -->
+        <div class="chapters-block" id="modal-chapters-container">
+          <h3 class="chapters-title">⏱️ Capítulos e Momentos de Oração:</h3>
+          <p class="chapters-hint">Clique em um horário para pular diretamente no vídeo:</p>
+          <div class="chapters-list" id="modal-chapters-list"></div>
+        </div>
+
+        <!-- Next Episode Bar -->
+        <div class="next-episode-card" id="next-episode-card" style="display:none;">
+          <div class="next-label">A Seguir na Série:</div>
+          <div class="next-row">
+            <div class="next-thumb" id="next-thumb"></div>
+            <div class="next-info">
+              <h4 id="next-title">Próximo Episódio</h4>
+              <p id="next-subtitle">Sinopse rápida...</p>
+            </div>
+            <button class="btn btn-primary btn-sm" id="btn-play-next">Assistir Agora ▶</button>
+          </div>
+        </div>
+
+        <!-- Campaign Resources -->
+        <div class="modal-footer-cta">
+          <div class="cta-card cta-prayer">
+            <div class="cta-icon">✍️</div>
+            <div class="cta-info">
+              <h4>Altar de Oração (Sigilo Absoluto)</h4>
+              <p>Apresente suas causas, família e finanças diante do Pai.</p>
+            </div>
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSdSSDbxRA8Kff5dHjIwSEqHht2u-cePAfcgDZrQyypv_BJuhQ/viewform" target="_blank" rel="noopener noreferrer" class="btn btn-gold btn-sm">Enviar Pedido</a>
+          </div>
+
+          <div class="cta-card cta-wa">
+            <div class="cta-icon">📱</div>
+            <div class="cta-info">
+              <h4>Comunidade dos Intercessores</h4>
+              <p>Receba os devocionais em PDF e áudios de oração.</p>
+            </div>
+            <a href="https://chat.whatsapp.com/CFHnQ4R22By3bMTQ7qT2V7" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm">Entrar no Grupo</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <span class="brand-name">BRUNNO ANASTÁCIO</span>
+        <span class="live-pill">LIVE</span>
+        <p class="footer-tagline">Uma clínica de cura comportamental, neurociência e princípios bíblicos de prosperidade.</p>
+      </div>
+
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Plataformas</h4>
+          <a href="https://brunnoanastacio.com.br" target="_blank" rel="noopener noreferrer">Site Oficial</a>
+          <a href="https://chat.whatsapp.com/CFHnQ4R22By3bMTQ7qT2V7" target="_blank" rel="noopener noreferrer">Comunidade WhatsApp</a>
+          <a href="https://docs.google.com/forms/d/e/1FAIpQLSdSSDbxRA8Kff5dHjIwSEqHht2u-cePAfcgDZrQyypv_BJuhQ/viewform" target="_blank" rel="noopener noreferrer">Altar de Oração</a>
+        </div>
+        <div class="footer-col">
+          <h4>Cursos & Imersões</h4>
+          <a href="https://brunnoanastacio.com.br/ifb" target="_blank" rel="noopener noreferrer">Inteligência Financeira Bíblica</a>
+          <a href="https://brunnoanastacio.com.br/raizes" target="_blank" rel="noopener noreferrer">Raízes Familiares</a>
+          <a href="https://brunnoanastacio.com.br/ebook" target="_blank" rel="noopener noreferrer">eBook 4 Money Scripts</a>
+        </div>
+        <div class="footer-col">
+          <h4>Vigílias ao Vivo</h4>
+          <p class="live-notice">Segunda a Sexta às 23h30</p>
+          <a href="https://meet.google.com/rot-avjz-zoq" target="_blank" rel="noopener noreferrer" class="meet-link">📍 Sala Google Meet</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; 2026 Brunno Anastácio. Todos os direitos reservados. Projeto Live Streaming.</p>
+    </div>
+  </footer>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
