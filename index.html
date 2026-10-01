@@ -4,14 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Brunno Anastácio LIVE | Catálogo Oficial de Séries e Ministrações</title>
-  <meta name="description" content="Assista às séries e vigílias proféticas com o Pr. Brunno Anastácio. O Deus que se Revela no Deserto, Raízes Familiares, Inteligência Financeira Bíblica e Altar de Oração.">
+  <meta name="description" content="Assista às séries e vigílias proféticas com o Pr. Brunno Anastácio. O Deus que se Revela no Deserto, Raízes Familiares, Inteligência Financeira Bíblica e Altar de Oração. Baixe os devocionais oficiais em PDF.">
   <link rel="icon" type="image/png" href="assets/favicon.png">
 
   <!-- Open Graph / Social Media -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://live.brunnoanastacio.com.br/">
   <meta property="og:title" content="Brunno Anastácio LIVE | Séries e Ministrações">
-  <meta property="og:description" content="Streaming oficial das jornadas de oração, inteligência bíblica e cura de raízes familiares com Pr. Brunno Anastácio.">
+  <meta property="og:description" content="Streaming oficial das jornadas de oração, inteligência bíblica e cura de raízes familiares com Pr. Brunno Anastácio. Baixe os devocionais em PDF.">
   <meta property="og:image" content="https://i.ytimg.com/vi/E_K3wxrdliE/hqdefault.jpg">
 
   <!-- Google Fonts -->
@@ -33,6 +33,7 @@
         <nav class="nav-menu" id="nav-menu">
           <a href="#inicio" class="nav-link active" data-filter="all">Início</a>
           <a href="#cat-deserto" class="nav-link" data-filter="cat-deserto">Tabernáculos</a>
+          <a href="#devocionais" class="nav-link" data-filter="devocionais">📚 Devocionais PDF</a>
           <a href="#minha-lista" class="nav-link" id="nav-my-list" data-filter="my-list">
             Minha Lista <span class="list-badge" id="list-count">0</span>
           </a>
@@ -51,6 +52,12 @@
           <input type="text" id="search-input" class="search-input" placeholder="Buscar por tema, versículo, palavra..." autocomplete="off">
           <button class="search-clear-btn" id="search-clear-btn" style="display:none;">&times;</button>
         </div>
+
+        <!-- Devocionais PDF Quick Link -->
+        <a href="#devocionais" class="btn-nav-pdf" title="Baixar Devocionais em PDF">
+          <span class="pdf-nav-icon">📚</span>
+          <span>Devocionais PDF</span>
+        </a>
 
         <!-- Altar de Oração CTA -->
         <a href="https://docs.google.com/forms/d/e/1FAIpQLSdSSDbxRA8Kff5dHjIwSEqHht2u-cePAfcgDZrQyypv_BJuhQ/viewform" target="_blank" rel="noopener noreferrer" class="btn-altar">
@@ -107,6 +114,16 @@
           <span>Assistir Episódio 1</span>
         </button>
 
+        <a href="#devocionais" class="btn btn-gold-outline" id="hero-pdf-btn">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+          </svg>
+          <span>Baixar Devocionais (PDF)</span>
+        </a>
+
         <button class="btn btn-secondary" id="hero-info-btn">
           <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10"></circle>
@@ -133,6 +150,7 @@
       <div class="filter-pills" id="filter-pills">
         <button class="pill-btn active" data-filter="all">Todos os Episódios</button>
         <button class="pill-btn" data-filter="cat-deserto">Tabernáculos (7 Dias)</button>
+        <button class="pill-btn" data-filter="devocionais">📚 Devocionais em PDF (7 Dias)</button>
         <button class="pill-btn" data-filter="my-list">⭐ Minha Lista</button>
       </div>
     </div>
@@ -151,6 +169,30 @@
   <main class="catalog-container" id="catalog-container">
     <!-- Rows will be dynamically rendered from catalog.js -->
   </main>
+
+  <!-- Dedicated Devotionals Section (PDFs Oficiais) -->
+  <section class="devotionals-section" id="devocionais">
+    <div class="devotionals-container">
+      <div class="devotionals-header">
+        <div class="devotionals-title-group">
+          <div class="devotionals-badge-row">
+            <span class="badge-gold">MATERIAL DE APOIO OFICIAL</span>
+            <span class="badge-outline">JORNADA COMPLETA</span>
+            <span class="badge-text">DOWNLOAD GRATUITO</span>
+          </div>
+          <h2 class="devotionals-main-title">📚 Devocionais Oficiais da Jornada (PDFs)</h2>
+          <p class="devotionals-main-subtitle">
+            Baixe os guias de estudo proféticos dia a dia com decretos, orações e versículos comentados pelo Pr. Brunno Anastácio ao longo da campanha da Festa dos Tabernáculos.
+          </p>
+        </div>
+      </div>
+
+      <!-- Devotionals Grid -->
+      <div class="devotionals-grid" id="devotionals-grid">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+    </div>
+  </section>
 
   <!-- Floating Community Bar -->
   <aside class="community-banner">

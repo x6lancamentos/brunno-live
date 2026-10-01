@@ -1514,3 +1514,289 @@ body {
     gap: 2rem;
   }
 }
+
+/* ==========================================================================
+   DEVOTIONALS HUB & DOWNLOADS STYLING
+   ========================================================================== */
+
+/* Navbar Devocionais PDF Button */
+.btn-nav-pdf {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: rgba(212, 175, 55, 0.12);
+  border: 1px solid var(--gold-border);
+  color: var(--gold-light);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.45rem 0.95rem;
+  border-radius: 50px;
+  transition: all var(--transition-fast);
+}
+
+.btn-nav-pdf:hover {
+  background: var(--gold-gradient);
+  color: #000;
+  border-color: transparent;
+  box-shadow: 0 0 16px var(--gold-glow);
+  transform: translateY(-1px);
+}
+
+/* Hero Gold Outline Button */
+.btn-gold-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: rgba(212, 175, 55, 0.1);
+  border: 1.5px solid var(--gold-primary);
+  color: var(--gold-light);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 700;
+  padding: 0.75rem 1.4rem;
+  border-radius: 6px;
+  backdrop-filter: blur(8px);
+  transition: all var(--transition-fast);
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.12);
+}
+
+.btn-gold-outline:hover {
+  background: var(--gold-gradient);
+  color: #000;
+  border-color: transparent;
+  box-shadow: 0 0 25px var(--gold-glow);
+  transform: scale(1.03);
+}
+
+
+/* Devotionals Dedicated Section */
+.devotionals-section {
+  padding: 4.5rem 4% 5rem;
+  background: linear-gradient(180deg, rgba(8, 8, 10, 0) 0%, rgba(18, 18, 24, 0.8) 25%, rgba(12, 12, 16, 0.95) 100%);
+  position: relative;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.devotionals-container {
+  max-width: 1800px;
+  margin: 0 auto;
+}
+
+.devotionals-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.devotionals-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.devotionals-main-title {
+  font-family: var(--font-serif);
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.2;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(180deg, #FFFFFF 0%, #F5E6B8 70%, #D4AF37 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.devotionals-main-subtitle {
+  font-size: 0.98rem;
+  color: var(--text-secondary);
+  max-width: 760px;
+  line-height: 1.55;
+}
+
+
+/* Devotionals Grid */
+.devotionals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Devotional Card */
+.devotional-card {
+  background: rgba(21, 21, 28, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  transition: transform var(--transition-normal), border-color var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.devotional-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--gold-primary);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7), 0 0 22px rgba(212, 175, 55, 0.22);
+}
+
+.devotional-card-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--gold-gradient);
+  opacity: 0.7;
+}
+
+.devotional-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.1rem;
+}
+
+.devotional-icon-box {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  background: rgba(212, 175, 55, 0.12);
+  border: 1px solid var(--gold-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.devotional-icon {
+  font-size: 1.6rem;
+}
+
+.devotional-badge-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.3rem;
+}
+
+.devotional-format-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.devotional-card-body {
+  flex-grow: 1;
+  margin-bottom: 1.25rem;
+}
+
+.devotional-title {
+  font-family: var(--font-serif);
+  font-size: 1.22rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.35;
+  margin-bottom: 0.6rem;
+}
+
+.devotional-theme {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 0.9rem;
+}
+
+.devotional-scripture {
+  margin-bottom: 0.2rem;
+}
+
+.scripture-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: rgba(212, 175, 55, 0.08);
+  border: 1px solid var(--gold-border);
+  color: var(--gold-light);
+  font-size: 0.76rem;
+  font-weight: 600;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+}
+
+.devotional-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.btn-dev-download {
+  flex-grow: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding: 0.65rem 1rem;
+  text-decoration: none;
+}
+
+.btn-dev-watch {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.65rem 0.9rem;
+}
+
+/* Footer Highlight Link */
+.highlight-link {
+  color: var(--gold-light) !important;
+  font-weight: 600;
+}
+
+.highlight-link:hover {
+  color: #fff !important;
+  text-shadow: 0 0 10px var(--gold-glow);
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .btn-nav-pdf span:last-child {
+    display: none;
+  }
+
+  .btn-nav-pdf {
+    padding: 0.45rem 0.6rem;
+  }
+
+  .devotionals-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+  }
+
+
+  .devotionals-main-title {
+    font-size: 1.6rem;
+  }
+
+  .devotionals-grid {
+    grid-template-columns: 1fr;
+  }
+}

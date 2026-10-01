@@ -1,4 +1,4 @@
-import { CATALOG } from './catalog.js';
+import { CATALOG, DEVOTIONALS } from './catalog.js';
 
 // State Management
 const STATE = {
@@ -36,6 +36,10 @@ const DOM = {
   heroInfoBtn: document.getElementById('hero-info-btn'),
   heroAddListBtn: document.getElementById('hero-add-list-btn'),
 
+  // Devotionals Hub Elements
+  devotionalsSection: document.getElementById('devocionais'),
+  devotionalsGrid: document.getElementById('devotionals-grid'),
+
   // Modal Elements
   modalBackdrop: document.getElementById('modal-backdrop'),
   modalWindow: document.getElementById('modal-window'),
@@ -69,6 +73,7 @@ const DOM = {
 function init() {
   renderHero();
   renderCatalog();
+  renderDevotionals();
   updateWatchlistBadge();
   setupEventListeners();
 }
@@ -146,7 +151,7 @@ function renderCatalog() {
         listBtn.addEventListener('click', (e) => {
           e.stopPropagation();
           toggleWatchlist(ep);
-          renderCatalog(); // re-render icons
+          renderCatalog();
         });
       }
     }
@@ -192,6 +197,66 @@ function createCardHTML(ep, category) {
       </div>
     </article>
   `;
+}
+
+// Render Devotionals Dedicated Grid
+function renderDevotionals() {
+  if (!DOM.devotionalsGrid) return;
+
+  DOM.devotionalsGrid.innerHTML = DEVOTIONALS.map(dev => {
+    return `
+      <article class="devotional-card" id="${dev.id}">
+        <div class="devotional-card-glow"></div>
+        <div class="devotional-card-header">
+          <div class="devotional-icon-box">
+            <span class="devotional-icon">${dev.icon}</span>
+          </div>
+          <div class="devotional-badge-col">
+            <span class="badge-gold">${dev.day}</span>
+            <span class="devotional-format-badge">PDF OFICIAL</span>
+          </div>
+        </div>
+
+        <div class="devotional-card-body">
+          <h3 class="devotional-title">${dev.title}</h3>
+          <p class="devotional-theme">${dev.theme}</p>
+          <div class="devotional-scripture">
+            <span class="scripture-pill">📖 ${dev.scripture}</span>
+          </div>
+        </div>
+
+        <div class="devotional-card-actions">
+          <a href="${dev.pdfUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-gold btn-dev-download">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <span>Baixar PDF</span>
+          </a>
+
+          <button class="btn btn-secondary btn-dev-watch" data-epid="${dev.episodeId}" title="Assistir ministração">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+            <span>Assistir</span>
+          </button>
+        </div>
+      </article>
+    `;
+  }).join('');
+
+  // Attach watch button click listeners
+  DOM.devotionalsGrid.querySelectorAll('.btn-dev-watch').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const epId = btn.getAttribute('data-epid');
+      const cat = CATALOG.categories[0];
+      const ep = cat.episodes.find(e => e.id === epId);
+      if (ep) {
+        openPlayerModal(ep, cat);
+      }
+    });
+  });
 }
 
 // Open Cinematic Player Modal
@@ -299,7 +364,7 @@ function updateModalListButton(epId) {
 function closeModal() {
   DOM.modalBackdrop.classList.remove('active');
   DOM.modalBackdrop.setAttribute('aria-hidden', 'true');
-  DOM.youtubePlayer.src = ''; // stop audio and video playback
+  DOM.youtubePlayer.src = '';
   document.body.style.overflow = '';
   STATE.currentEpisode = null;
 }
@@ -330,6 +395,7 @@ function renderWatchlistView() {
   DOM.searchResultsSection.style.display = 'block';
   DOM.searchTermDisplay.textContent = 'Minha Lista de Favoritos';
   DOM.catalogContainer.style.display = 'none';
+  if (DOM.devotionalsSection) DOM.devotionalsSection.style.display = 'none';
 
   if (STATE.watchlist.length === 0) {
     DOM.searchGrid.innerHTML = `
@@ -355,6 +421,7 @@ function handleSearch(query) {
   if (!q) {
     DOM.searchResultsSection.style.display = 'none';
     DOM.catalogContainer.style.display = 'flex';
+    if (DOM.devotionalsSection) DOM.devotionalsSection.style.display = 'block';
     DOM.searchClearBtn.style.display = 'none';
     return;
   }
@@ -362,6 +429,7 @@ function handleSearch(query) {
   DOM.searchClearBtn.style.display = 'block';
   DOM.searchResultsSection.style.display = 'block';
   DOM.catalogContainer.style.display = 'none';
+  if (DOM.devotionalsSection) DOM.devotionalsSection.style.display = 'none';
   DOM.searchTermDisplay.textContent = `"${query}"`;
 
   const matches = [];
@@ -503,8 +571,16 @@ function setupEventListeners() {
       } else if (filter === 'all') {
         DOM.searchResultsSection.style.display = 'none';
         DOM.catalogContainer.style.display = 'flex';
+        if (DOM.devotionalsSection) DOM.devotionalsSection.style.display = 'block';
         document.querySelectorAll('.catalog-row').forEach(row => row.style.display = 'flex');
         window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else if (filter === 'devocionais') {
+        DOM.searchResultsSection.style.display = 'none';
+        DOM.catalogContainer.style.display = 'flex';
+        if (DOM.devotionalsSection) {
+          DOM.devotionalsSection.style.display = 'block';
+          DOM.devotionalsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
       } else {
         DOM.searchResultsSection.style.display = 'none';
         DOM.catalogContainer.style.display = 'flex';
