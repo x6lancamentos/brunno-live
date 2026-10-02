@@ -77,6 +77,18 @@ export const DEVOTIONALS = [
     pdfUrl: "https://drive.google.com/file/d/1wWoebHnKz6dktoRA-80KnyKIQzG0Q0wv/view",
     fileName: "Devocional Oficial - Dia 06 - O Memorial dos Frutos e o Romper da Esterilidade.pdf",
     episodeId: "ep-dia06"
+  },
+  {
+    id: "dev-ultimo-encontro",
+    day: "Último Encontro",
+    icon: "🔒",
+    title: "O Grande Encerramento da Jornada",
+    theme: "Consagração profética, selamento da aliança e a glória da colheita em Tabernáculos.",
+    scripture: "Ageu 2:9 | Levítico 23:36",
+    pdfUrl: "#",
+    isLocked: true,
+    fileName: "",
+    episodeId: "ep-ultimo-encontro"
   }
 ];
 
@@ -303,6 +315,21 @@ export const CATALOG = {
             buttonLabel: "Baixar Devocional em PDF",
             fileName: "Devocional Oficial - Dia 06 - O Memorial dos Frutos e o Romper da Esterilidade.pdf"
           }
+        },
+        {
+          id: "ep-ultimo-encontro",
+          day: "Último Encontro",
+          number: 8,
+          title: "O Último Encontro — A Grande Celebração da Aliança",
+          subtitle: "Vigília Profética de Encerramento e Selamento",
+          videoId: "MSpunDsPnAo",
+          duration: "Em Breve",
+          badge: "🔒 EM BREVE",
+          isLocked: true,
+          scripture: "Ageu 2:9 | Levítico 23:36 | Joel 2:26-27",
+          synopsis: "O último encontro profético da Festa dos Tabernáculos. Uma vigília de consagração e selamento de bênçãos sobre sua família e futuro. Em breve disponível no ar.",
+          tags: ["Encerramento", "Aliança", "Vigília Final", "Tabernáculos"],
+          timestamps: []
         }
       ]
     }

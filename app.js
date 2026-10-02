@@ -320,6 +320,10 @@ function renderCatalog() {
     if (ep) {
       card.addEventListener('click', (e) => {
         if (e.target.closest('.card-btn-action')) return;
+        if (ep.isLocked) {
+          showToast(`🔒 "${ep.title}" será liberado em breve!`);
+          return;
+        }
         openCinemaMode(ep, cat);
       });
 
@@ -336,9 +340,46 @@ function renderCatalog() {
 }
 
 function createCardHTML(ep, category) {
+  const thumbUrl = `https://i.ytimg.com/vi/${ep.videoId}/hqdefault.jpg`;
+
+  if (ep.isLocked) {
+    return `
+      <article class="video-card card-locked" data-id="${ep.id}" data-category="${category.id}">
+        <div class="card-media">
+          <img class="card-thumb" src="${thumbUrl}" alt="${ep.title}" loading="lazy">
+          <div class="card-overlay-gradient"></div>
+          <span class="card-day-tag">${ep.day}</span>
+          <span class="card-duration">${ep.duration}</span>
+          <div class="card-lock-overlay">
+            <div class="lock-icon-badge">
+              <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+            </div>
+            <span class="lock-overlay-label">EM BREVE</span>
+          </div>
+        </div>
+        <div class="card-content">
+          <div class="card-meta-row">
+            <span class="card-badge badge-locked">🔒 EM BREVE</span>
+            <span class="card-tag">Episódio ${ep.number}</span>
+          </div>
+          <h3 class="card-title">${ep.title}</h3>
+          <p class="card-synopsis">${ep.synopsis}</p>
+          <div class="card-footer">
+            <div class="card-tags-list">
+              ${ep.tags ? ep.tags.slice(0, 2).map(t => `<span class="card-tag">• ${t}</span>`).join('') : ''}
+            </div>
+            <span class="card-lock-notice">🔒 Liberado em breve</span>
+          </div>
+        </div>
+      </article>
+    `;
+  }
+
   const isSaved = STATE.watchlist.some(item => item.id === ep.id);
   const isEpWatched = STATE.watched.includes(ep.id);
-  const thumbUrl = `https://i.ytimg.com/vi/${ep.videoId}/hqdefault.jpg`;
 
   return `
     <article class="video-card ${isEpWatched ? 'card-watched' : ''}" data-id="${ep.id}" data-category="${category.id}">
@@ -384,6 +425,37 @@ function renderDevotionals() {
   if (!DOM.devotionalsGrid) return;
 
   DOM.devotionalsGrid.innerHTML = DEVOTIONALS.map(dev => {
+    if (dev.isLocked) {
+      return `
+        <article class="devotional-card card-locked" id="${dev.id}">
+          <div class="devotional-card-glow"></div>
+          <div class="devotional-card-header">
+            <div class="devotional-icon-box lock-box">
+              <span class="devotional-icon">🔒</span>
+            </div>
+            <div class="devotional-badge-col">
+              <span class="badge-gold">${dev.day}</span>
+              <span class="devotional-format-badge">EM BREVE</span>
+            </div>
+          </div>
+
+          <div class="devotional-card-body">
+            <h3 class="devotional-title">${dev.title}</h3>
+            <p class="devotional-theme">${dev.theme}</p>
+            <div class="devotional-scripture">
+              <span class="scripture-pill">📖 ${dev.scripture}</span>
+            </div>
+          </div>
+
+          <div class="devotional-card-actions">
+            <button class="btn btn-locked-dev btn-dev-locked" onclick="window.showLockedToast()">
+              <span>🔒 Material Liberado em Breve</span>
+            </button>
+          </div>
+        </article>
+      `;
+    }
+
     return `
       <article class="devotional-card" id="${dev.id}">
         <div class="devotional-card-glow"></div>
@@ -593,9 +665,29 @@ function seekVideoTo(seconds) {
   }
 }
 
+// Global toast for locked devotionals
+window.showLockedToast = function() {
+  showToast('🔒 O material do Último Encontro estará disponível logo após a ministração!');
+};
+
 // Render Sidebar Playlist
 function renderCinemaPlaylist(category, currentEp) {
   DOM.cinemaPlaylistList.innerHTML = category.episodes.map(ep => {
+    if (ep.isLocked) {
+      return `
+        <div class="cinema-playlist-item locked-item" data-id="${ep.id}">
+          <div class="playlist-item-thumb locked-thumb">
+            <div class="locked-icon-center">🔒</div>
+          </div>
+          <div class="playlist-item-info">
+            <span class="playlist-day-tag">${ep.day}</span>
+            <h4 class="playlist-ep-title">${ep.title}</h4>
+            <span class="playlist-ep-duration locked-tag">🔒 Em Breve</span>
+          </div>
+        </div>
+      `;
+    }
+
     const isCurrent = ep.id === currentEp.id;
     const isWatched = STATE.watched.includes(ep.id);
     const thumbUrl = `https://i.ytimg.com/vi/${ep.videoId}/default.jpg`;
@@ -619,8 +711,14 @@ function renderCinemaPlaylist(category, currentEp) {
     item.onclick = () => {
       const epId = item.getAttribute('data-id');
       const targetEp = category.episodes.find(e => e.id === epId);
-      if (targetEp && targetEp.id !== currentEp.id) {
-        openCinemaMode(targetEp, category);
+      if (targetEp) {
+        if (targetEp.isLocked) {
+          showToast(`🔒 "${targetEp.title}" será liberado em breve!`);
+          return;
+        }
+        if (targetEp.id !== currentEp.id) {
+          openCinemaMode(targetEp, category);
+        }
       }
     };
   });
@@ -697,8 +795,9 @@ function updateCinemaWatchedButton(epId) {
 }
 
 function updateProgressUI() {
-  const total = CATALOG.categories[0].episodes.length;
-  const count = STATE.watched.length;
+  const availableEpisodes = CATALOG.categories[0].episodes.filter(e => !e.isLocked);
+  const total = availableEpisodes.length;
+  const count = STATE.watched.filter(id => availableEpisodes.some(e => e.id === id)).length;
   const percentage = Math.round((count / total) * 100);
 
   // 1. Browse Progress Banner

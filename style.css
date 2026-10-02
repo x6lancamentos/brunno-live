@@ -2711,3 +2711,150 @@ body {
     justify-content: center;
   }
 }
+
+/* ==========================================================================
+   LOCKED CARDS & ITEMS (ÚLTIMO ENCONTRO)
+   ========================================================================== */
+.video-card.card-locked {
+  cursor: pointer;
+  border-color: rgba(212, 175, 55, 0.25);
+}
+
+.video-card.card-locked:hover {
+  border-color: var(--gold-border);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(212, 175, 55, 0.2);
+}
+
+.video-card.card-locked .card-thumb {
+  opacity: 0.35;
+  filter: grayscale(80%) brightness(0.7);
+}
+
+.card-lock-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  z-index: 5;
+  background: radial-gradient(circle, rgba(12, 12, 18, 0.5) 0%, rgba(8, 8, 12, 0.85) 100%);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+.lock-icon-badge {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(212, 175, 55, 0.15);
+  border: 1.5px solid var(--gold-border);
+  color: var(--gold-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 25px var(--gold-glow);
+  transition: transform var(--transition-fast);
+}
+
+.video-card.card-locked:hover .lock-icon-badge {
+  transform: scale(1.1);
+  background: rgba(212, 175, 55, 0.25);
+}
+
+.lock-overlay-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--gold-light);
+  background: rgba(0, 0, 0, 0.75);
+  padding: 0.25rem 0.7rem;
+  border-radius: 4px;
+  border: 1px solid var(--gold-border);
+}
+
+.badge-locked {
+  background: rgba(212, 175, 55, 0.12) !important;
+  color: var(--gold-light) !important;
+  border: 1px solid var(--gold-border);
+}
+
+.card-lock-notice {
+  font-size: 0.78rem;
+  color: var(--gold-light);
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+/* Devotional Card Locked */
+.devotional-card.card-locked {
+  border-color: rgba(212, 175, 55, 0.2);
+  background: rgba(16, 16, 22, 0.6);
+}
+
+.devotional-card.card-locked .devotional-card-glow {
+  background: linear-gradient(90deg, transparent, var(--gold-border), transparent);
+}
+
+.devotional-icon-box.lock-box {
+  background: rgba(212, 175, 55, 0.08);
+  border-color: rgba(212, 175, 55, 0.3);
+}
+
+.btn-locked-dev {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px dashed var(--gold-border);
+  color: var(--gold-light);
+  cursor: pointer;
+  padding: 0.7rem 1.2rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all var(--transition-fast);
+}
+
+.btn-locked-dev:hover {
+  background: rgba(212, 175, 55, 0.15);
+  border-color: var(--gold-primary);
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+  transform: translateY(-1px);
+}
+
+/* Cinema Playlist Locked Item */
+.cinema-playlist-item.locked-item {
+  opacity: 0.65;
+  cursor: pointer;
+  border: 1px dashed rgba(212, 175, 55, 0.3);
+}
+
+.cinema-playlist-item.locked-item:hover {
+  opacity: 0.9;
+  border-color: var(--gold-border);
+  background: rgba(212, 175, 55, 0.08);
+}
+
+.locked-thumb {
+  background: rgba(20, 20, 28, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.locked-icon-center {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.locked-tag {
+  color: var(--gold-light) !important;
+  font-weight: 700 !important;
+}
