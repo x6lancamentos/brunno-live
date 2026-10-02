@@ -108,58 +108,92 @@ const DOM = {
 };
 
 // =========================================================================
-// YOUTUBE IFRAME API INITIALIZATION & CONTROLLER
+// YOUTUBE IFRAME API INITIALIZATION & RESILIENT EMBED CONTROLLER
 // =========================================================================
+if (typeof YT !== 'undefined' && YT.Player) {
+  STATE.isYTReady = true;
+}
+
 window.onYouTubeIframeAPIReady = function() {
   STATE.isYTReady = true;
-  if (STATE.pendingVideo) {
-    createOrLoadPlayer(STATE.pendingVideo.videoId, STATE.pendingVideo.startTime);
-    STATE.pendingVideo = null;
-  }
+  bindYTPlayer();
 };
 
-function createOrLoadPlayer(videoId, startTime = 0) {
-  if (!STATE.isYTReady || typeof YT === 'undefined' || !YT.Player) {
-    STATE.pendingVideo = { videoId, startTime };
-    return;
-  }
-
-  if (STATE.ytPlayer && typeof STATE.ytPlayer.loadVideoById === 'function') {
-    STATE.ytPlayer.loadVideoById({
-      videoId: videoId,
-      startSeconds: startTime
-    });
-  } else {
-    STATE.ytPlayer = new YT.Player('cinema-player-target', {
-      videoId: videoId,
-      playerVars: {
-        autoplay: 1,
-        rel: 0,
-        modestbranding: 1,
-        playsinline: 1,
-        enablejsapi: 1,
-        origin: window.location.origin
-      },
-      events: {
-        onReady: (event) => {
-          if (startTime > 0) {
-            event.target.seekTo(startTime, true);
-          }
-          event.target.playVideo();
-        },
-        onStateChange: onPlayerStateChange
+// Listen for YouTube postMessage events (cross-origin resilient)
+window.addEventListener('message', (event) => {
+  try {
+    const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+    if (data && data.event === 'onStateChange') {
+      if (data.info === 0) { // ENDED
+        handleVideoEnded();
+      } else if (data.info === 1) { // PLAYING
+        cancelAutoplayTimer();
       }
-    });
+    }
+  } catch (e) {
+    // Non-JSON message, ignore safely
+  }
+});
+
+function createOrLoadPlayer(videoId, startTime = 0) {
+  const container = document.querySelector('.cinema-player-aspect');
+  if (!container) return;
+
+  const startParam = startTime > 0 ? `&start=${startTime}` : '';
+  const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1&enablejsapi=1${startParam}`;
+
+  // If YT.Player is already running healthy, reuse it
+  if (STATE.ytPlayer && typeof STATE.ytPlayer.loadVideoById === 'function') {
+    try {
+      STATE.ytPlayer.loadVideoById({
+        videoId: videoId,
+        startSeconds: startTime
+      });
+      startPlaybackTracker();
+      return;
+    } catch (err) {
+      STATE.ytPlayer = null;
+    }
   }
 
+  // Render iframe immediately so video starts with zero latency
+  container.innerHTML = `
+    <iframe
+      id="cinema-player-target"
+      src="${embedUrl}"
+      title="Brunno Anastácio LIVE"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      referrerpolicy="strict-origin-when-cross-origin"
+      allowfullscreen>
+    </iframe>
+  `;
+
+  // Attach YT.Player if API is available
+  bindYTPlayer();
   startPlaybackTracker();
+}
+
+function bindYTPlayer() {
+  if (typeof YT !== 'undefined' && YT.Player && document.getElementById('cinema-player-target')) {
+    try {
+      STATE.ytPlayer = new YT.Player('cinema-player-target', {
+        events: {
+          onReady: () => {},
+          onStateChange: onPlayerStateChange
+        }
+      });
+    } catch (e) {
+      // Fallback via postMessage already wired
+    }
+  }
 }
 
 function onPlayerStateChange(event) {
   // YT.PlayerState: -1 (unstarted), 0 (ended), 1 (playing), 2 (paused), 3 (buffering), 5 (video cued)
-  if (event.data === YT.PlayerState.ENDED) {
+  if (event.data === (window.YT?.PlayerState?.ENDED ?? 0)) {
     handleVideoEnded();
-  } else if (event.data === YT.PlayerState.PLAYING) {
+  } else if (event.data === (window.YT?.PlayerState?.PLAYING ?? 1)) {
     cancelAutoplayTimer();
   }
 }
@@ -613,10 +647,18 @@ function closeCinemaMode() {
   STATE.isCinemaMode = false;
   cancelAutoplayTimer();
 
-  // Pause YouTube Video
-  if (STATE.ytPlayer && typeof STATE.ytPlayer.pauseVideo === 'function') {
-    STATE.ytPlayer.pauseVideo();
+  // Stop video completely and silence audio
+  if (STATE.ytPlayer && typeof STATE.ytPlayer.stopVideo === 'function') {
+    try {
+      STATE.ytPlayer.stopVideo();
+    } catch (e) {}
   }
+
+  const target = document.getElementById('cinema-player-target');
+  if (target && target.tagName === 'IFRAME') {
+    target.src = 'about:blank';
+  }
+  STATE.ytPlayer = null;
 
   // Switch View
   DOM.cinemaView.style.display = 'none';
@@ -658,9 +700,34 @@ function renderCinemaChapters(episode) {
 }
 
 function seekVideoTo(seconds) {
+  let handled = false;
+
   if (STATE.ytPlayer && typeof STATE.ytPlayer.seekTo === 'function') {
-    STATE.ytPlayer.seekTo(seconds, true);
-    STATE.ytPlayer.playVideo();
+    try {
+      STATE.ytPlayer.seekTo(seconds, true);
+      STATE.ytPlayer.playVideo();
+      handled = true;
+    } catch (e) {}
+  }
+
+  const iframe = document.getElementById('cinema-player-target');
+  if (iframe && iframe.contentWindow) {
+    try {
+      iframe.contentWindow.postMessage(JSON.stringify({
+        event: 'command',
+        func: 'seekTo',
+        args: [seconds, true]
+      }), '*');
+      iframe.contentWindow.postMessage(JSON.stringify({
+        event: 'command',
+        func: 'playVideo',
+        args: []
+      }), '*');
+      handled = true;
+    } catch (e) {}
+  }
+
+  if (handled) {
     showToast(`Avançado para o momento selecionado!`);
   }
 }
