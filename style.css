@@ -1775,7 +1775,884 @@ body {
   text-shadow: 0 0 10px var(--gold-glow);
 }
 
-/* Responsive adjustments */
+/* ==========================================================================
+   CAMPAIGN PROGRESS BANNER (BROWSE VIEW)
+   ========================================================================== */
+.campaign-progress-banner {
+  padding: 0 4% 1.75rem;
+}
+
+.progress-banner-container {
+  max-width: 1800px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.12) 0%, rgba(16, 16, 21, 0.85) 100%);
+  border: 1px solid var(--gold-border);
+  border-radius: 10px;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.progress-banner-info {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.progress-banner-icon {
+  font-size: 1.75rem;
+}
+
+.progress-banner-title {
+  display: block;
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.progress-banner-sub {
+  font-size: 0.85rem;
+  color: var(--gold-light);
+}
+
+.progress-banner-meter {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 260px;
+}
+
+.progress-bar-track {
+  flex-grow: 1;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: var(--gold-gradient);
+  border-radius: 50px;
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 0 10px var(--gold-glow);
+}
+
+.progress-banner-percent {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--gold-light);
+  min-width: 42px;
+  text-align: right;
+}
+
+/* Watched Tag on Cards */
+.card-watched-tag {
+  position: absolute;
+  bottom: 0.65rem;
+  right: 0.65rem;
+  z-index: 4;
+  background: rgba(46, 125, 50, 0.85);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.video-card.card-watched {
+  border-color: rgba(212, 175, 55, 0.4);
+}
+
+/* ==========================================================================
+   DEDICATED CINEMA MODE (THEATER / WATCH VIEW)
+   ========================================================================== */
+.cinema-view {
+  min-height: 100vh;
+  background-color: var(--bg-dark);
+  padding-top: 68px; /* Below fixed navbar */
+  animation: cinemaFadeIn 0.35s ease;
+}
+
+@keyframes cinemaFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Cinema Topbar */
+.cinema-topbar {
+  background: rgba(12, 12, 16, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-subtle);
+  position: sticky;
+  top: 68px;
+  z-index: 30;
+  padding: 0.75rem 4%;
+}
+
+.cinema-topbar-container {
+  max-width: 1800px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.cinema-btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-light);
+  color: var(--text-primary);
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.cinema-btn-back:hover {
+  background: var(--gold-gradient);
+  color: #000;
+  border-color: transparent;
+  box-shadow: 0 0 15px var(--gold-glow);
+  transform: translateX(-3px);
+}
+
+.cinema-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+.breadcrumb-series {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.breadcrumb-sep {
+  color: var(--gold-primary);
+}
+
+.breadcrumb-episode {
+  color: var(--gold-light);
+  font-weight: 700;
+}
+
+.cinema-top-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cinema-nav-arrow {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.45rem 0.85rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.cinema-nav-arrow:hover:not(:disabled) {
+  background: rgba(212, 175, 55, 0.15);
+  border-color: var(--gold-border);
+  color: var(--gold-light);
+}
+
+.cinema-nav-arrow:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* Cinema Layout Stage */
+.cinema-stage-wrapper {
+  padding: 1.75rem 4% 5rem;
+}
+
+.cinema-stage-container {
+  max-width: 1800px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 2.25rem;
+  align-items: start;
+}
+
+/* Left Column: Player Box */
+.cinema-player-box {
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.85), 0 0 30px rgba(212, 175, 55, 0.12);
+  border: 1px solid var(--border-light);
+  position: relative;
+}
+
+.cinema-player-aspect {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* 16:9 Cinema Aspect Ratio */
+}
+
+.cinema-player-aspect iframe,
+.cinema-player-aspect #cinema-player-target {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* Autoplay Overlay */
+.cinema-autoplay-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(8, 8, 10, 0.94);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 25;
+  animation: cinemaFadeIn 0.3s ease;
+}
+
+.autoplay-card {
+  text-align: center;
+  max-width: 480px;
+  padding: 2rem;
+  background: rgba(21, 21, 28, 0.9);
+  border: 1px solid var(--gold-border);
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 25px var(--gold-glow);
+}
+
+.autoplay-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--gold-light);
+  background: rgba(212, 175, 55, 0.15);
+  border: 1px solid var(--gold-border);
+  padding: 0.2rem 0.65rem;
+  border-radius: 4px;
+  margin-bottom: 0.75rem;
+}
+
+.autoplay-title {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+.autoplay-countdown {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+}
+
+.autoplay-countdown strong {
+  font-size: 1.2rem;
+  color: var(--gold-light);
+}
+
+.autoplay-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+}
+
+/* Cinema Header Meta */
+.cinema-header-meta {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin: 1.5rem 0 1.25rem;
+  flex-wrap: wrap;
+}
+
+.cinema-meta-left {
+  flex-grow: 1;
+}
+
+.cinema-badges-row {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.badge-watched-indicator {
+  background: rgba(46, 125, 50, 0.2);
+  border: 1px solid #4caf50;
+  color: #81c784;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+}
+
+.cinema-title {
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.2;
+  margin-bottom: 0.35rem;
+}
+
+.cinema-subtitle {
+  font-size: 1.05rem;
+  color: var(--gold-light);
+  line-height: 1.4;
+}
+
+.cinema-meta-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.btn-cinema-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-light);
+  color: var(--text-primary);
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 0.6rem 1.1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-cinema-action:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: var(--gold-border);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.btn-cinema-action.active {
+  background: rgba(212, 175, 55, 0.18);
+  border-color: var(--gold-primary);
+  color: var(--gold-light);
+}
+
+/* Material Devocional em PDF Box */
+.cinema-pdf-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(22, 22, 30, 0.95) 100%);
+  border: 1px solid var(--gold-primary);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.6), 0 0 15px var(--gold-glow);
+  position: relative;
+  overflow: hidden;
+}
+
+.cinema-pdf-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--gold-gradient);
+}
+
+.cinema-pdf-icon-badge {
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  background: var(--gold-gradient);
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 0 15px var(--gold-glow);
+}
+
+.cinema-pdf-info {
+  flex-grow: 1;
+}
+
+.cinema-pdf-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.3rem;
+}
+
+.cinema-pdf-title {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.25rem;
+}
+
+.cinema-pdf-desc {
+  font-size: 0.86rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+.btn-cinema-download {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  white-space: nowrap;
+  padding: 0.65rem 1.3rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+/* Scripture Box */
+.cinema-scripture-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(16, 16, 21, 0.6) 100%);
+  border: 1px solid var(--gold-border);
+  border-left: 4px solid var(--gold-primary);
+  border-radius: 8px;
+  padding: 1.1rem 1.3rem;
+  margin-bottom: 1.5rem;
+}
+
+.cinema-scripture-icon {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.cinema-scripture-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--gold-light);
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.cinema-scripture-text {
+  font-size: 0.95rem;
+  color: #fff;
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+/* Synopsis Box */
+.cinema-synopsis-box {
+  background: rgba(21, 21, 28, 0.6);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 1.25rem 1.4rem;
+  margin-bottom: 1.5rem;
+}
+
+.cinema-section-title {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  color: #fff;
+  margin-bottom: 0.6rem;
+}
+
+.cinema-synopsis-text {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+}
+
+/* Notes Box (Diário Espiritual) */
+.cinema-notes-box {
+  background: rgba(18, 18, 24, 0.8);
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  padding: 1.35rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.notes-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.notes-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.notes-icon {
+  font-size: 1.2rem;
+}
+
+.notes-title {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  color: #fff;
+  font-weight: 700;
+}
+
+.notes-status {
+  font-size: 0.75rem;
+  color: var(--gold-light);
+  font-style: italic;
+}
+
+.notes-hint {
+  font-size: 0.84rem;
+  color: var(--text-muted);
+  margin-bottom: 0.85rem;
+}
+
+.cinema-notes-textarea {
+  width: 100%;
+  min-height: 110px;
+  background: rgba(8, 8, 10, 0.7);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  color: #fff;
+  font-family: var(--font-sans);
+  font-size: 0.92rem;
+  line-height: 1.55;
+  padding: 0.85rem 1rem;
+  resize: vertical;
+  outline: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.cinema-notes-textarea:focus {
+  border-color: var(--gold-primary);
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
+}
+
+/* ==========================================================================
+   CINEMA RIGHT SIDEBAR (PROGRESS, CHAPTERS, PLAYLIST)
+   ========================================================================== */
+.cinema-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Progress Card */
+.cinema-progress-card {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.14) 0%, rgba(18, 18, 24, 0.9) 100%);
+  border: 1px solid var(--gold-border);
+  border-radius: 10px;
+  padding: 1.25rem 1.4rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.progress-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.progress-badge {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--gold-light);
+}
+
+.progress-count {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.progress-congrats {
+  font-size: 0.84rem;
+  color: var(--gold-light);
+  margin-top: 0.75rem;
+  line-height: 1.4;
+}
+
+/* Chapters Widget */
+.cinema-chapters-widget {
+  background: rgba(21, 21, 28, 0.7);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 1.25rem;
+}
+
+.sidebar-widget-title {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  color: #fff;
+  margin-bottom: 0.25rem;
+}
+
+.sidebar-widget-hint {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-bottom: 0.85rem;
+}
+
+.cinema-chapters-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  max-height: 280px;
+  overflow-y: auto;
+  padding-right: 0.35rem;
+}
+
+.cinema-chapters-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.cinema-chapters-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+.cinema-chapter-item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 0.45rem 0.65rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.cinema-chapter-item:hover {
+  background: rgba(212, 175, 55, 0.12);
+  border-color: var(--gold-border);
+  transform: translateX(3px);
+}
+
+.chapter-time-pill {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--gold-light);
+  background: rgba(212, 175, 55, 0.15);
+  padding: 0.15rem 0.4rem;
+  border-radius: 3px;
+}
+
+.chapter-label-text {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  flex-grow: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chapter-play-arrow {
+  font-size: 0.75rem;
+  color: var(--gold-primary);
+  opacity: 0.7;
+}
+
+/* Playlist Widget */
+.cinema-playlist-widget {
+  background: rgba(21, 21, 28, 0.7);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 1.25rem;
+}
+
+.playlist-widget-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.85rem;
+}
+
+.playlist-season-tag {
+  font-size: 0.7rem;
+  color: var(--gold-light);
+  font-weight: 600;
+}
+
+.cinema-playlist-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.cinema-playlist-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 0.5rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.cinema-playlist-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--border-light);
+  transform: translateX(3px);
+}
+
+.cinema-playlist-item.active {
+  background: rgba(212, 175, 55, 0.14);
+  border-color: var(--gold-primary);
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
+}
+
+.cinema-playlist-item.watched:not(.active) {
+  opacity: 0.75;
+}
+
+.playlist-item-thumb {
+  width: 68px;
+  height: 48px;
+  border-radius: 4px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.playing-badge {
+  position: absolute;
+  inset: 0;
+  background: rgba(212, 175, 55, 0.85);
+  color: #000;
+  font-size: 0.6rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.watched-check-badge {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 16px;
+  height: 16px;
+  background: #2e7d32;
+  color: #fff;
+  border-radius: 50%;
+  font-size: 0.65rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.playlist-item-info {
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.playlist-day-tag {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--gold-light);
+}
+
+.playlist-ep-title {
+  font-size: 0.82rem;
+  color: #fff;
+  font-weight: 600;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0.1rem 0;
+}
+
+.playlist-ep-duration {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+/* Cinema Altar Card */
+.cinema-altar-card {
+  display: flex;
+  gap: 0.85rem;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.12) 0%, rgba(16, 16, 21, 0.7) 100%);
+  border: 1px solid var(--gold-border);
+  border-radius: 10px;
+  padding: 1.1rem;
+}
+
+.altar-card-icon {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.altar-card-body h4 {
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  color: #fff;
+  margin-bottom: 0.25rem;
+}
+
+.altar-card-body p {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin-bottom: 0.75rem;
+}
+
+/* ==========================================================================
+   RESPONSIVE ADJUSTMENTS
+   ========================================================================== */
+@media (max-width: 1024px) {
+  .cinema-stage-container {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .cinema-sidebar {
+    order: 2;
+  }
+}
+
 @media (max-width: 900px) {
   .btn-nav-pdf span:last-child {
     display: none;
@@ -1785,12 +2662,20 @@ body {
     padding: 0.45rem 0.6rem;
   }
 
+  .progress-banner-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .progress-banner-meter {
+    width: 100%;
+  }
+
   .devotionals-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 1.25rem;
   }
-
 
   .devotionals-main-title {
     font-size: 1.6rem;
@@ -1798,5 +2683,31 @@ body {
 
   .devotionals-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .cinema-title {
+    font-size: 1.45rem;
+  }
+
+  .cinema-topbar-container {
+    flex-wrap: wrap;
+  }
+
+  .cinema-breadcrumb {
+    order: 3;
+    width: 100%;
+    margin-top: 0.25rem;
+  }
+
+  .cinema-pdf-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .btn-cinema-download {
+    width: 100%;
+    justify-content: center;
   }
 }

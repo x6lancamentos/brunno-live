@@ -1,15 +1,30 @@
 import { CATALOG, DEVOTIONALS } from './catalog.js';
 
-// State Management
+// Application State
 const STATE = {
   currentEpisode: null,
   currentCategory: null,
   watchlist: JSON.parse(localStorage.getItem('brunno_live_watchlist') || '[]'),
-  activeFilter: 'all'
+  watched: JSON.parse(localStorage.getItem('brunno_live_watched') || '[]'),
+  notes: JSON.parse(localStorage.getItem('brunno_live_notes') || '{}'),
+  activeFilter: 'all',
+  isCinemaMode: false,
+  ytPlayer: null,
+  isYTReady: false,
+  pendingVideo: null,
+  autoplayTimer: null,
+  autoplayCountdown: 5,
+  resumeTimes: JSON.parse(localStorage.getItem('brunno_live_resume') || '{}'),
+  saveTimeInterval: null
 };
 
-// DOM Elements
+// DOM Cache
 const DOM = {
+  // Views
+  browseView: document.getElementById('browse-view'),
+  cinemaView: document.getElementById('cinema-view'),
+
+  // Navigation
   navbar: document.getElementById('navbar'),
   mobileToggle: document.getElementById('mobile-toggle'),
   navMenu: document.getElementById('nav-menu'),
@@ -25,6 +40,12 @@ const DOM = {
   listCount: document.getElementById('list-count'),
   toast: document.getElementById('toast'),
 
+  // Browse Progress Banner
+  campaignProgressBanner: document.getElementById('campaign-progress-banner'),
+  browseProgressSub: document.getElementById('browse-progress-sub'),
+  browseProgressFill: document.getElementById('browse-progress-fill'),
+  browseProgressPercent: document.getElementById('browse-progress-percent'),
+
   // Hero Elements
   heroBgImage: document.getElementById('hero-bg-image'),
   heroBadge: document.getElementById('hero-badge'),
@@ -36,49 +57,203 @@ const DOM = {
   heroInfoBtn: document.getElementById('hero-info-btn'),
   heroAddListBtn: document.getElementById('hero-add-list-btn'),
 
-  // Devotionals Hub Elements
-  devotionalsSection: document.getElementById('devocionais'),
+  // Devotionals Grid
   devotionalsGrid: document.getElementById('devotionals-grid'),
 
-  // Modal Elements
-  modalBackdrop: document.getElementById('modal-backdrop'),
-  modalWindow: document.getElementById('modal-window'),
-  modalClose: document.getElementById('modal-close'),
-  youtubePlayer: document.getElementById('youtube-player'),
-  modalDay: document.getElementById('modal-day'),
-  modalDuration: document.getElementById('modal-duration'),
-  modalCategory: document.getElementById('modal-category'),
-  modalTitle: document.getElementById('modal-title'),
-  modalSubtitle: document.getElementById('modal-subtitle'),
-  modalScriptureContainer: document.getElementById('modal-scripture-container'),
-  modalScripture: document.getElementById('modal-scripture'),
-  modalPdfContainer: document.getElementById('modal-pdf-container'),
-  modalPdfTitle: document.getElementById('modal-pdf-title'),
-  modalPdfDesc: document.getElementById('modal-pdf-desc'),
-  modalPdfBtn: document.getElementById('modal-pdf-btn'),
-  modalPdfBtnText: document.getElementById('modal-pdf-btn-text'),
-  modalSynopsis: document.getElementById('modal-synopsis'),
-  modalChaptersContainer: document.getElementById('modal-chapters-container'),
-  modalChaptersList: document.getElementById('modal-chapters-list'),
-  nextEpisodeCard: document.getElementById('next-episode-card'),
-  nextThumb: document.getElementById('next-thumb'),
-  nextTitle: document.getElementById('next-title'),
-  nextSubtitle: document.getElementById('next-subtitle'),
-  btnPlayNext: document.getElementById('btn-play-next'),
-  modalAddListBtn: document.getElementById('modal-add-list-btn'),
-  modalShareBtn: document.getElementById('modal-share-btn')
+  // Cinema Mode Elements
+  cinemaBtnBack: document.getElementById('cinema-btn-back'),
+  cinemaCrumbEpisode: document.getElementById('cinema-crumb-episode'),
+  cinemaPrevBtn: document.getElementById('cinema-prev-btn'),
+  cinemaNextBtn: document.getElementById('cinema-next-btn'),
+  cinemaPlayerTarget: document.getElementById('cinema-player-target'),
+  cinemaAutoplayOverlay: document.getElementById('cinema-autoplay-overlay'),
+  autoplayNextTitle: document.getElementById('autoplay-next-title'),
+  autoplaySeconds: document.getElementById('autoplay-seconds'),
+  btnAutoplayNow: document.getElementById('btn-autoplay-now'),
+  btnAutoplayCancel: document.getElementById('btn-autoplay-cancel'),
+
+  cinemaDayBadge: document.getElementById('cinema-day-badge'),
+  cinemaDuration: document.getElementById('cinema-duration'),
+  cinemaWatchedPill: document.getElementById('cinema-watched-pill'),
+  cinemaTitle: document.getElementById('cinema-title'),
+  cinemaSubtitle: document.getElementById('cinema-subtitle'),
+  cinemaToggleWatchedBtn: document.getElementById('cinema-toggle-watched-btn'),
+  cinemaWatchedIcon: document.getElementById('cinema-watched-icon'),
+  cinemaWatchedLabel: document.getElementById('cinema-watched-label'),
+  cinemaAddListBtn: document.getElementById('cinema-add-list-btn'),
+  cinemaListIcon: document.getElementById('cinema-list-icon'),
+  cinemaListLabel: document.getElementById('cinema-list-label'),
+  cinemaShareBtn: document.getElementById('cinema-share-btn'),
+
+  // Cinema PDF & Scripture
+  cinemaPdfContainer: document.getElementById('cinema-pdf-container'),
+  cinemaPdfTitle: document.getElementById('cinema-pdf-title'),
+  cinemaPdfDesc: document.getElementById('cinema-pdf-desc'),
+  cinemaPdfBtn: document.getElementById('cinema-pdf-btn'),
+  cinemaScriptureContainer: document.getElementById('cinema-scripture-container'),
+  cinemaScripture: document.getElementById('cinema-scripture'),
+  cinemaSynopsis: document.getElementById('cinema-synopsis'),
+
+  // Cinema Notes (Diário Espiritual)
+  cinemaNotesInput: document.getElementById('cinema-notes-input'),
+  notesStatus: document.getElementById('notes-status'),
+
+  // Cinema Sidebar
+  cinemaProgressText: document.getElementById('cinema-progress-text'),
+  cinemaProgressFill: document.getElementById('cinema-progress-fill'),
+  cinemaProgressCongrats: document.getElementById('cinema-progress-congrats'),
+  cinemaChaptersWidget: document.getElementById('cinema-chapters-widget'),
+  cinemaChaptersList: document.getElementById('cinema-chapters-list'),
+  cinemaPlaylistList: document.getElementById('cinema-playlist-list')
 };
 
-// Initialize Application
+// =========================================================================
+// YOUTUBE IFRAME API INITIALIZATION & CONTROLLER
+// =========================================================================
+window.onYouTubeIframeAPIReady = function() {
+  STATE.isYTReady = true;
+  if (STATE.pendingVideo) {
+    createOrLoadPlayer(STATE.pendingVideo.videoId, STATE.pendingVideo.startTime);
+    STATE.pendingVideo = null;
+  }
+};
+
+function createOrLoadPlayer(videoId, startTime = 0) {
+  if (!STATE.isYTReady || typeof YT === 'undefined' || !YT.Player) {
+    STATE.pendingVideo = { videoId, startTime };
+    return;
+  }
+
+  if (STATE.ytPlayer && typeof STATE.ytPlayer.loadVideoById === 'function') {
+    STATE.ytPlayer.loadVideoById({
+      videoId: videoId,
+      startSeconds: startTime
+    });
+  } else {
+    STATE.ytPlayer = new YT.Player('cinema-player-target', {
+      videoId: videoId,
+      playerVars: {
+        autoplay: 1,
+        rel: 0,
+        modestbranding: 1,
+        playsinline: 1,
+        enablejsapi: 1,
+        origin: window.location.origin
+      },
+      events: {
+        onReady: (event) => {
+          if (startTime > 0) {
+            event.target.seekTo(startTime, true);
+          }
+          event.target.playVideo();
+        },
+        onStateChange: onPlayerStateChange
+      }
+    });
+  }
+
+  startPlaybackTracker();
+}
+
+function onPlayerStateChange(event) {
+  // YT.PlayerState: -1 (unstarted), 0 (ended), 1 (playing), 2 (paused), 3 (buffering), 5 (video cued)
+  if (event.data === YT.PlayerState.ENDED) {
+    handleVideoEnded();
+  } else if (event.data === YT.PlayerState.PLAYING) {
+    cancelAutoplayTimer();
+  }
+}
+
+// When video finishes playing
+function handleVideoEnded() {
+  if (!STATE.currentEpisode) return;
+
+  // 1. Mark as Watched automatically!
+  markAsWatched(STATE.currentEpisode.id, true);
+  showToast(`🎉 "${STATE.currentEpisode.title}" concluído!`);
+
+  // 2. Check for next episode and trigger Netflix autoplay countdown
+  const category = STATE.currentCategory || CATALOG.categories[0];
+  const currentIndex = category.episodes.findIndex(e => e.id === STATE.currentEpisode.id);
+  const nextEp = category.episodes[currentIndex + 1];
+
+  if (nextEp) {
+    triggerAutoplayCountdown(nextEp, category);
+  }
+}
+
+// Netflix Autoplay Countdown
+function triggerAutoplayCountdown(nextEp, category) {
+  cancelAutoplayTimer();
+  DOM.autoplayNextTitle.textContent = `${nextEp.day}: ${nextEp.title}`;
+  DOM.cinemaAutoplayOverlay.style.display = 'flex';
+  STATE.autoplayCountdown = 5;
+  DOM.autoplaySeconds.textContent = STATE.autoplayCountdown;
+
+  DOM.btnAutoplayNow.onclick = () => {
+    cancelAutoplayTimer();
+    openCinemaMode(nextEp, category);
+  };
+
+  DOM.btnAutoplayCancel.onclick = () => {
+    cancelAutoplayTimer();
+  };
+
+  STATE.autoplayTimer = setInterval(() => {
+    STATE.autoplayCountdown--;
+    DOM.autoplaySeconds.textContent = STATE.autoplayCountdown;
+
+    if (STATE.autoplayCountdown <= 0) {
+      cancelAutoplayTimer();
+      openCinemaMode(nextEp, category);
+    }
+  }, 1000);
+}
+
+function cancelAutoplayTimer() {
+  if (STATE.autoplayTimer) {
+    clearInterval(STATE.autoplayTimer);
+    STATE.autoplayTimer = null;
+  }
+  if (DOM.cinemaAutoplayOverlay) {
+    DOM.cinemaAutoplayOverlay.style.display = 'none';
+  }
+}
+
+// Playback Position Tracker (Resume watching)
+function startPlaybackTracker() {
+  if (STATE.saveTimeInterval) clearInterval(STATE.saveTimeInterval);
+  STATE.saveTimeInterval = setInterval(() => {
+    if (STATE.ytPlayer && typeof STATE.ytPlayer.getCurrentTime === 'function' && STATE.currentEpisode) {
+      try {
+        const time = Math.floor(STATE.ytPlayer.getCurrentTime());
+        if (time > 10) {
+          STATE.resumeTimes[STATE.currentEpisode.id] = time;
+          localStorage.setItem('brunno_live_resume', JSON.stringify(STATE.resumeTimes));
+        }
+      } catch (err) {
+        // Player not ready or cross-origin safe
+      }
+    }
+  }, 5000);
+}
+
+// =========================================================================
+// APPLICATION INITIALIZATION
+// =========================================================================
 function init() {
   renderHero();
   renderCatalog();
   renderDevotionals();
   updateWatchlistBadge();
+  updateProgressUI();
   setupEventListeners();
+  handleInitialRouting();
 }
 
-// Render Hero Billboard
+// =========================================================================
+// RENDER HERO BILLBOARD
+// =========================================================================
 function renderHero() {
   const feat = CATALOG.featured;
   const firstEp = CATALOG.categories[0].episodes[0];
@@ -91,8 +266,8 @@ function renderHero() {
 
   DOM.heroTags.innerHTML = feat.tags.map(t => `<span class="tag-pill">${t}</span>`).join('');
 
-  DOM.heroPlayBtn.onclick = () => openPlayerModal(firstEp, CATALOG.categories[0]);
-  DOM.heroInfoBtn.onclick = () => openPlayerModal(firstEp, CATALOG.categories[0]);
+  DOM.heroPlayBtn.onclick = () => openCinemaMode(firstEp, CATALOG.categories[0]);
+  DOM.heroInfoBtn.onclick = () => openCinemaMode(firstEp, CATALOG.categories[0]);
 
   updateHeroListButton(firstEp.id);
   DOM.heroAddListBtn.onclick = () => {
@@ -108,7 +283,9 @@ function updateHeroListButton(epId) {
     : `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>`;
 }
 
-// Render Catalog Rows
+// =========================================================================
+// RENDER CATALOG ROWS
+// =========================================================================
 function renderCatalog() {
   DOM.catalogContainer.innerHTML = '';
 
@@ -143,7 +320,7 @@ function renderCatalog() {
     if (ep) {
       card.addEventListener('click', (e) => {
         if (e.target.closest('.card-btn-action')) return;
-        openPlayerModal(ep, cat);
+        openCinemaMode(ep, cat);
       });
 
       const listBtn = card.querySelector('.card-btn-list');
@@ -158,18 +335,19 @@ function renderCatalog() {
   });
 }
 
-// Helper: Card HTML Template
 function createCardHTML(ep, category) {
   const isSaved = STATE.watchlist.some(item => item.id === ep.id);
+  const isEpWatched = STATE.watched.includes(ep.id);
   const thumbUrl = `https://i.ytimg.com/vi/${ep.videoId}/hqdefault.jpg`;
 
   return `
-    <article class="video-card" data-id="${ep.id}" data-category="${category.id}">
+    <article class="video-card ${isEpWatched ? 'card-watched' : ''}" data-id="${ep.id}" data-category="${category.id}">
       <div class="card-media">
         <img class="card-thumb" src="${thumbUrl}" alt="${ep.title}" loading="lazy">
         <div class="card-overlay-gradient"></div>
         <span class="card-day-tag">${ep.day}</span>
         <span class="card-duration">${ep.duration}</span>
+        ${isEpWatched ? `<span class="card-watched-tag">✓ Assistido</span>` : ''}
         <div class="card-play-hover">
           <div class="card-play-icon">
             <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
@@ -199,7 +377,9 @@ function createCardHTML(ep, category) {
   `;
 }
 
-// Render Devotionals Dedicated Grid
+// =========================================================================
+// RENDER DEVOTIONALS GRID
+// =========================================================================
 function renderDevotionals() {
   if (!DOM.devotionalsGrid) return;
 
@@ -235,7 +415,7 @@ function renderDevotionals() {
             <span>Baixar PDF</span>
           </a>
 
-          <button class="btn btn-secondary btn-dev-watch" data-epid="${dev.episodeId}" title="Assistir ministração">
+          <button class="btn btn-secondary btn-dev-watch" data-epid="${dev.episodeId}" title="Assistir no Modo Cinema">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
               <polygon points="5 3 19 12 5 21 5 3"></polygon>
             </svg>
@@ -253,123 +433,298 @@ function renderDevotionals() {
       const cat = CATALOG.categories[0];
       const ep = cat.episodes.find(e => e.id === epId);
       if (ep) {
-        openPlayerModal(ep, cat);
+        openCinemaMode(ep, cat);
       }
     });
   });
 }
 
-// Open Cinematic Player Modal
-function openPlayerModal(episode, category, startTime = 0) {
+// =========================================================================
+// CINEMA MODE DEDICATED PLAYER EXPERIENCE
+// =========================================================================
+function openCinemaMode(episode, category, startTime = 0) {
   STATE.currentEpisode = episode;
   STATE.currentCategory = category;
+  STATE.isCinemaMode = true;
 
-  // Set YouTube Embed URL
-  const autoPlayParam = 'autoplay=1&rel=0&modestbranding=1';
-  const startParam = startTime > 0 ? `&start=${startTime}` : '';
-  DOM.youtubePlayer.src = `https://www.youtube-nocookie.com/embed/${episode.videoId}?${autoPlayParam}${startParam}`;
+  cancelAutoplayTimer();
 
-  // Populate Meta Info
-  DOM.modalDay.textContent = episode.day;
-  DOM.modalDuration.textContent = episode.duration;
-  DOM.modalCategory.textContent = category.title;
-  DOM.modalTitle.textContent = episode.title;
-  DOM.modalSubtitle.textContent = episode.subtitle || '';
-  DOM.modalSynopsis.textContent = episode.synopsis;
+  // 1. Switch View Container
+  DOM.browseView.style.display = 'none';
+  DOM.cinemaView.style.display = 'block';
 
-  // Scripture Base
-  if (episode.scripture) {
-    DOM.modalScriptureContainer.style.display = 'flex';
-    DOM.modalScripture.textContent = episode.scripture;
-  } else {
-    DOM.modalScriptureContainer.style.display = 'none';
+  // 2. Update Browser URL Hash (Deep Linking)
+  if (window.location.hash !== `#assistir/${episode.id}`) {
+    history.pushState(null, '', `#assistir/${episode.id}`);
   }
 
-  // PDF Material Download Section
-  if (episode.pdfMaterial) {
-    DOM.modalPdfContainer.style.display = 'flex';
-    DOM.modalPdfTitle.textContent = episode.pdfMaterial.title;
-    DOM.modalPdfDesc.textContent = episode.pdfMaterial.subtitle;
-    DOM.modalPdfBtn.href = episode.pdfMaterial.downloadUrl;
-    DOM.modalPdfBtnText.textContent = episode.pdfMaterial.buttonLabel || 'Baixar Devocional (PDF)';
-  } else {
-    DOM.modalPdfContainer.style.display = 'none';
-  }
+  // 3. Populate Header & Breadcrumbs
+  DOM.cinemaCrumbEpisode.textContent = episode.day;
+  DOM.cinemaDayBadge.textContent = episode.day;
+  DOM.cinemaDuration.textContent = episode.duration;
+  DOM.cinemaTitle.textContent = episode.title;
+  DOM.cinemaSubtitle.textContent = episode.subtitle || '';
 
-  // Chapters & Timestamps
-  if (episode.timestamps && episode.timestamps.length > 0) {
-    DOM.modalChaptersContainer.style.display = 'block';
-    DOM.modalChaptersList.innerHTML = episode.timestamps.map(t => `
-      <div class="chapter-item" data-seconds="${t.seconds}">
-        <span class="chapter-time">${t.time}</span>
-        <span class="chapter-label">${t.label}</span>
-        <span class="chapter-arrow">Pular ▶</span>
-      </div>
-    `).join('');
-
-    DOM.modalChaptersList.querySelectorAll('.chapter-item').forEach(item => {
-      item.onclick = () => {
-        const secs = parseInt(item.getAttribute('data-seconds'), 10);
-        jumpToVideoTime(episode.videoId, secs);
-      };
-    });
-  } else {
-    DOM.modalChaptersContainer.style.display = 'none';
-  }
-
-  // Next Episode Card
+  // 4. Update Prev / Next Arrows
   const currentIndex = category.episodes.findIndex(e => e.id === episode.id);
+  const prevEp = category.episodes[currentIndex - 1];
   const nextEp = category.episodes[currentIndex + 1];
 
-  if (nextEp) {
-    DOM.nextEpisodeCard.style.display = 'block';
-    DOM.nextThumb.style.backgroundImage = `url('https://i.ytimg.com/vi/${nextEp.videoId}/hqdefault.jpg')`;
-    DOM.nextTitle.textContent = `${nextEp.day}: ${nextEp.title}`;
-    DOM.nextSubtitle.textContent = nextEp.synopsis;
-    DOM.btnPlayNext.onclick = () => openPlayerModal(nextEp, category);
-  } else {
-    DOM.nextEpisodeCard.style.display = 'none';
-  }
+  DOM.cinemaPrevBtn.disabled = !prevEp;
+  DOM.cinemaPrevBtn.onclick = () => prevEp && openCinemaMode(prevEp, category);
 
-  // Update Modal Buttons
-  updateModalListButton(episode.id);
+  DOM.cinemaNextBtn.disabled = !nextEp;
+  DOM.cinemaNextBtn.onclick = () => nextEp && openCinemaMode(nextEp, category);
 
-  DOM.modalAddListBtn.onclick = () => {
-    toggleWatchlist(episode);
-    updateModalListButton(episode.id);
-    renderCatalog();
+  // 5. Update Watched Toggle Status
+  updateCinemaWatchedButton(episode.id);
+
+  DOM.cinemaToggleWatchedBtn.onclick = () => {
+    toggleWatched(episode.id);
+    updateCinemaWatchedButton(episode.id);
   };
 
-  DOM.modalShareBtn.onclick = () => shareEpisode(episode);
+  // 6. Update Watchlist Button
+  updateCinemaListButton(episode.id);
+  DOM.cinemaAddListBtn.onclick = () => {
+    toggleWatchlist(episode);
+    updateCinemaListButton(episode.id);
+  };
 
-  // Show Modal
-  DOM.modalBackdrop.classList.add('active');
-  DOM.modalBackdrop.setAttribute('aria-hidden', 'false');
-  document.body.style.overflow = 'hidden';
+  // 7. Share Action (WhatsApp 1-Click)
+  DOM.cinemaShareBtn.onclick = () => shareEpisode(episode);
+
+  // 8. PDF Material Card
+  if (episode.pdfMaterial) {
+    DOM.cinemaPdfContainer.style.display = 'flex';
+    DOM.cinemaPdfTitle.textContent = episode.pdfMaterial.title;
+    DOM.cinemaPdfDesc.textContent = episode.pdfMaterial.subtitle;
+    DOM.cinemaPdfBtn.href = episode.pdfMaterial.downloadUrl;
+  } else {
+    DOM.cinemaPdfContainer.style.display = 'none';
+  }
+
+  // 9. Scripture Card
+  if (episode.scripture) {
+    DOM.cinemaScriptureContainer.style.display = 'flex';
+    DOM.cinemaScripture.textContent = episode.scripture;
+  } else {
+    DOM.cinemaScriptureContainer.style.display = 'none';
+  }
+
+  // 10. Synopsis
+  DOM.cinemaSynopsis.textContent = episode.synopsis;
+
+  // 11. Diário Espiritual (Notes Persistence)
+  loadEpisodeNotes(episode.id);
+
+  // 12. Render Chapters (Timestamps with smooth seekTo)
+  renderCinemaChapters(episode);
+
+  // 13. Render Sidebar Playlist
+  renderCinemaPlaylist(category, episode);
+
+  // 14. Update Progress Card in Sidebar
+  updateProgressUI();
+
+  // 15. Check for saved resume time
+  const savedTime = startTime > 0 ? startTime : (STATE.resumeTimes[episode.id] || 0);
+
+  // 16. Load or Create YouTube Player
+  createOrLoadPlayer(episode.videoId, savedTime);
+
+  // Scroll to top smoothly
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function jumpToVideoTime(videoId, seconds) {
-  DOM.youtubePlayer.src = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&start=${seconds}&rel=0`;
-  showToast(`Avançado para o momento selecionado!`);
+function closeCinemaMode() {
+  STATE.isCinemaMode = false;
+  cancelAutoplayTimer();
+
+  // Pause YouTube Video
+  if (STATE.ytPlayer && typeof STATE.ytPlayer.pauseVideo === 'function') {
+    STATE.ytPlayer.pauseVideo();
+  }
+
+  // Switch View
+  DOM.cinemaView.style.display = 'none';
+  DOM.browseView.style.display = 'block';
+
+  // Reset Hash
+  if (window.location.hash.startsWith('#assistir')) {
+    history.pushState(null, '', window.location.pathname);
+  }
+
+  // Refresh Catalog and Progress
+  renderCatalog();
+  updateProgressUI();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function updateModalListButton(epId) {
-  const isSaved = STATE.watchlist.some(item => item.id === epId);
-  DOM.modalAddListBtn.innerHTML = isSaved
-    ? `<span class="action-icon">✓</span><span class="action-text">Na Lista</span>`
-    : `<span class="action-icon">＋</span><span class="action-text">Minha Lista</span>`;
+// Render Chapters (Timestamps)
+function renderCinemaChapters(episode) {
+  if (!episode.timestamps || episode.timestamps.length === 0) {
+    DOM.cinemaChaptersWidget.style.display = 'none';
+    return;
+  }
+
+  DOM.cinemaChaptersWidget.style.display = 'block';
+  DOM.cinemaChaptersList.innerHTML = episode.timestamps.map(t => `
+    <div class="cinema-chapter-item" data-seconds="${t.seconds}">
+      <span class="chapter-time-pill">${t.time}</span>
+      <span class="chapter-label-text">${t.label}</span>
+      <span class="chapter-play-arrow">▶</span>
+    </div>
+  `).join('');
+
+  DOM.cinemaChaptersList.querySelectorAll('.cinema-chapter-item').forEach(item => {
+    item.onclick = () => {
+      const secs = parseInt(item.getAttribute('data-seconds'), 10);
+      seekVideoTo(secs);
+    };
+  });
 }
 
-// Close Modal
-function closeModal() {
-  DOM.modalBackdrop.classList.remove('active');
-  DOM.modalBackdrop.setAttribute('aria-hidden', 'true');
-  DOM.youtubePlayer.src = '';
-  document.body.style.overflow = '';
-  STATE.currentEpisode = null;
+function seekVideoTo(seconds) {
+  if (STATE.ytPlayer && typeof STATE.ytPlayer.seekTo === 'function') {
+    STATE.ytPlayer.seekTo(seconds, true);
+    STATE.ytPlayer.playVideo();
+    showToast(`Avançado para o momento selecionado!`);
+  }
 }
 
-// Watchlist (Minha Lista)
+// Render Sidebar Playlist
+function renderCinemaPlaylist(category, currentEp) {
+  DOM.cinemaPlaylistList.innerHTML = category.episodes.map(ep => {
+    const isCurrent = ep.id === currentEp.id;
+    const isWatched = STATE.watched.includes(ep.id);
+    const thumbUrl = `https://i.ytimg.com/vi/${ep.videoId}/default.jpg`;
+
+    return `
+      <div class="cinema-playlist-item ${isCurrent ? 'active' : ''} ${isWatched ? 'watched' : ''}" data-id="${ep.id}">
+        <div class="playlist-item-thumb" style="background-image: url('${thumbUrl}');">
+          ${isCurrent ? '<div class="playing-badge">▶ NO AR</div>' : ''}
+          ${isWatched && !isCurrent ? '<div class="watched-check-badge">✓</div>' : ''}
+        </div>
+        <div class="playlist-item-info">
+          <span class="playlist-day-tag">${ep.day}</span>
+          <h4 class="playlist-ep-title">${ep.title}</h4>
+          <span class="playlist-ep-duration">${ep.duration}</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  DOM.cinemaPlaylistList.querySelectorAll('.cinema-playlist-item').forEach(item => {
+    item.onclick = () => {
+      const epId = item.getAttribute('data-id');
+      const targetEp = category.episodes.find(e => e.id === epId);
+      if (targetEp && targetEp.id !== currentEp.id) {
+        openCinemaMode(targetEp, category);
+      }
+    };
+  });
+}
+
+// Diário Espiritual (Notes)
+function loadEpisodeNotes(epId) {
+  DOM.cinemaNotesInput.value = STATE.notes[epId] || '';
+  DOM.notesStatus.textContent = STATE.notes[epId] ? 'Salvo no seu dispositivo' : 'Em branco';
+}
+
+function handleNotesInput(e) {
+  if (!STATE.currentEpisode) return;
+  const epId = STATE.currentEpisode.id;
+  STATE.notes[epId] = e.target.value;
+  localStorage.setItem('brunno_live_notes', JSON.stringify(STATE.notes));
+
+  DOM.notesStatus.textContent = 'Salvando...';
+  setTimeout(() => {
+    DOM.notesStatus.textContent = '✓ Salvo automaticamente';
+  }, 400);
+}
+
+// =========================================================================
+// WATCHED & CAMPAIGN PROGRESS LOGIC (LOCALSTORAGE)
+// =========================================================================
+function toggleWatched(epId) {
+  const index = STATE.watched.indexOf(epId);
+  const ep = CATALOG.categories[0].episodes.find(e => e.id === epId);
+  const title = ep ? ep.title : 'Episódio';
+
+  if (index >= 0) {
+    STATE.watched.splice(index, 1);
+    showToast(`"${title}" desmarcado.`);
+  } else {
+    STATE.watched.push(epId);
+    showToast(`✓ "${title}" marcado como concluído!`);
+  }
+
+  localStorage.setItem('brunno_live_watched', JSON.stringify(STATE.watched));
+  updateProgressUI();
+  updateCinemaWatchedButton(epId);
+  if (!STATE.isCinemaMode) renderCatalog();
+}
+
+function markAsWatched(epId, watched = true) {
+  const index = STATE.watched.indexOf(epId);
+  if (watched && index === -1) {
+    STATE.watched.push(epId);
+  } else if (!watched && index >= 0) {
+    STATE.watched.splice(index, 1);
+  }
+
+  localStorage.setItem('brunno_live_watched', JSON.stringify(STATE.watched));
+  updateProgressUI();
+  if (STATE.currentEpisode && STATE.currentEpisode.id === epId) {
+    updateCinemaWatchedButton(epId);
+  }
+}
+
+function updateCinemaWatchedButton(epId) {
+  const isDone = STATE.watched.includes(epId);
+  DOM.cinemaWatchedPill.style.display = isDone ? 'inline-block' : 'none';
+
+  if (isDone) {
+    DOM.cinemaToggleWatchedBtn.classList.add('active');
+    DOM.cinemaWatchedIcon.textContent = '✓';
+    DOM.cinemaWatchedLabel.textContent = 'Concluído';
+  } else {
+    DOM.cinemaToggleWatchedBtn.classList.remove('active');
+    DOM.cinemaWatchedIcon.textContent = '○';
+    DOM.cinemaWatchedLabel.textContent = 'Marcar como Assistido';
+  }
+}
+
+function updateProgressUI() {
+  const total = CATALOG.categories[0].episodes.length;
+  const count = STATE.watched.length;
+  const percentage = Math.round((count / total) * 100);
+
+  // 1. Browse Progress Banner
+  if (DOM.browseProgressSub) {
+    DOM.browseProgressSub.textContent = `${count} de ${total} ministrações concluídas`;
+  }
+  if (DOM.browseProgressFill) {
+    DOM.browseProgressFill.style.width = `${percentage}%`;
+  }
+  if (DOM.browseProgressPercent) {
+    DOM.browseProgressPercent.textContent = `${percentage}%`;
+  }
+
+  // 2. Cinema Sidebar Progress
+  if (DOM.cinemaProgressText) {
+    DOM.cinemaProgressText.textContent = `${count} de ${total} concluídos (${percentage}%)`;
+  }
+  if (DOM.cinemaProgressFill) {
+    DOM.cinemaProgressFill.style.width = `${percentage}%`;
+  }
+  if (DOM.cinemaProgressCongrats) {
+    DOM.cinemaProgressCongrats.style.display = count >= total ? 'block' : 'none';
+  }
+}
+
+// Watchlist
 function toggleWatchlist(episode) {
   const index = STATE.watchlist.findIndex(item => item.id === episode.id);
   if (index >= 0) {
@@ -391,11 +746,17 @@ function updateWatchlistBadge() {
   DOM.listCount.textContent = STATE.watchlist.length;
 }
 
+function updateCinemaListButton(epId) {
+  const isSaved = STATE.watchlist.some(item => item.id === epId);
+  DOM.cinemaListIcon.textContent = isSaved ? '★' : '＋';
+  DOM.cinemaListLabel.textContent = isSaved ? 'Na Lista' : 'Minha Lista';
+  DOM.cinemaAddListBtn.classList.toggle('active', isSaved);
+}
+
 function renderWatchlistView() {
   DOM.searchResultsSection.style.display = 'block';
   DOM.searchTermDisplay.textContent = 'Minha Lista de Favoritos';
   DOM.catalogContainer.style.display = 'none';
-  if (DOM.devotionalsSection) DOM.devotionalsSection.style.display = 'none';
 
   if (STATE.watchlist.length === 0) {
     DOM.searchGrid.innerHTML = `
@@ -415,13 +776,14 @@ function renderWatchlistView() {
   attachGridListeners(DOM.searchGrid);
 }
 
-// Search Logic
+// =========================================================================
+// SEARCH & SHARING
+// =========================================================================
 function handleSearch(query) {
   const q = query.trim().toLowerCase();
   if (!q) {
     DOM.searchResultsSection.style.display = 'none';
     DOM.catalogContainer.style.display = 'flex';
-    if (DOM.devotionalsSection) DOM.devotionalsSection.style.display = 'block';
     DOM.searchClearBtn.style.display = 'none';
     return;
   }
@@ -429,7 +791,6 @@ function handleSearch(query) {
   DOM.searchClearBtn.style.display = 'block';
   DOM.searchResultsSection.style.display = 'block';
   DOM.catalogContainer.style.display = 'none';
-  if (DOM.devotionalsSection) DOM.devotionalsSection.style.display = 'none';
   DOM.searchTermDisplay.textContent = `"${query}"`;
 
   const matches = [];
@@ -472,7 +833,7 @@ function attachGridListeners(container) {
     if (ep) {
       card.addEventListener('click', (e) => {
         if (e.target.closest('.card-btn-action')) return;
-        openPlayerModal(ep, cat);
+        openCinemaMode(ep, cat);
       });
 
       const listBtn = card.querySelector('.card-btn-list');
@@ -486,23 +847,22 @@ function attachGridListeners(container) {
   });
 }
 
-// Share Episode
+// 1-Click WhatsApp & Social Share
 function shareEpisode(episode) {
-  const shareData = {
-    title: episode.title,
-    text: `Assista ao episódio "${episode.title}" da série do Pr. Brunno Anastácio:`,
-    url: `https://youtu.be/${episode.videoId}`
-  };
+  const shareUrl = `${window.location.origin}${window.location.pathname}#assistir/${episode.id}`;
+  const shareText = `🕊️ *${episode.day} — ${episode.title}*\n\nAssista à ministração profética com o Pr. Brunno Anastácio e baixe o Devocional em PDF:\n\n${shareUrl}`;
 
-  if (navigator.share) {
-    navigator.share(shareData).catch(() => {});
-  } else {
-    navigator.clipboard.writeText(`https://youtu.be/${episode.videoId}`);
-    showToast(`Link copiado para a área de transferência!`);
+  // WhatsApp Web / App direct intent
+  const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
+  window.open(waUrl, '_blank');
+
+  // Copy link as fallback
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(shareUrl).catch(() => {});
   }
 }
 
-// Toast Feedback
+// Toast
 function showToast(message) {
   DOM.toast.textContent = message;
   DOM.toast.classList.add('show');
@@ -511,8 +871,43 @@ function showToast(message) {
   }, 3500);
 }
 
-// Setup Event Listeners
+// =========================================================================
+// DEEP LINKING ROUTER & EVENT LISTENERS
+// =========================================================================
+function handleInitialRouting() {
+  const hash = window.location.hash;
+  if (hash.startsWith('#assistir/')) {
+    const epId = hash.replace('#assistir/', '');
+    const cat = CATALOG.categories[0];
+    const ep = cat.episodes.find(e => e.id === epId);
+    if (ep) {
+      openCinemaMode(ep, cat);
+      return;
+    }
+  }
+
+  window.addEventListener('hashchange', () => {
+    const currentHash = window.location.hash;
+    if (currentHash.startsWith('#assistir/')) {
+      const epId = currentHash.replace('#assistir/', '');
+      const cat = CATALOG.categories[0];
+      const ep = cat.episodes.find(e => e.id === epId);
+      if (ep && (!STATE.currentEpisode || STATE.currentEpisode.id !== ep.id)) {
+        openCinemaMode(ep, cat);
+      }
+    } else if (STATE.isCinemaMode && !currentHash.startsWith('#assistir')) {
+      closeCinemaMode();
+    }
+  });
+}
+
 function setupEventListeners() {
+  // Cinema Back Button
+  DOM.cinemaBtnBack.addEventListener('click', closeCinemaMode);
+
+  // Notes Input
+  DOM.cinemaNotesInput.addEventListener('input', handleNotesInput);
+
   // Navbar scroll
   window.addEventListener('scroll', () => {
     if (window.scrollY > 40) {
@@ -522,24 +917,14 @@ function setupEventListeners() {
     }
   });
 
-  // Mobile menu
+  // Mobile Menu
   DOM.mobileToggle.addEventListener('click', () => {
     DOM.navMenu.classList.toggle('open');
   });
 
-  // Modal close events
-  DOM.modalClose.addEventListener('click', closeModal);
-  DOM.modalBackdrop.addEventListener('click', (e) => {
-    if (e.target === DOM.modalBackdrop) closeModal();
-  });
-  window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && DOM.modalBackdrop.classList.contains('active')) {
-      closeModal();
-    }
-  });
-
   // Search input
   DOM.searchInput.addEventListener('input', (e) => {
+    if (STATE.isCinemaMode) closeCinemaMode();
     handleSearch(e.target.value);
   });
   DOM.searchClearBtn.addEventListener('click', () => {
@@ -559,9 +944,13 @@ function setupEventListeners() {
       if (!filter) return;
 
       e.preventDefault();
+
+      if (STATE.isCinemaMode) {
+        closeCinemaMode();
+      }
+
       STATE.activeFilter = filter;
 
-      // Update active classes
       document.querySelectorAll('.pill-btn').forEach(p => p.classList.toggle('active', p.getAttribute('data-filter') === filter));
       document.querySelectorAll('.nav-link').forEach(n => n.classList.toggle('active', n.getAttribute('data-filter') === filter));
       DOM.navMenu.classList.remove('open');
@@ -571,15 +960,14 @@ function setupEventListeners() {
       } else if (filter === 'all') {
         DOM.searchResultsSection.style.display = 'none';
         DOM.catalogContainer.style.display = 'flex';
-        if (DOM.devotionalsSection) DOM.devotionalsSection.style.display = 'block';
         document.querySelectorAll('.catalog-row').forEach(row => row.style.display = 'flex');
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else if (filter === 'devocionais') {
         DOM.searchResultsSection.style.display = 'none';
         DOM.catalogContainer.style.display = 'flex';
-        if (DOM.devotionalsSection) {
-          DOM.devotionalsSection.style.display = 'block';
-          DOM.devotionalsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const devSec = document.getElementById('devocionais');
+        if (devSec) {
+          devSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
       } else {
         DOM.searchResultsSection.style.display = 'none';
@@ -594,7 +982,14 @@ function setupEventListeners() {
       }
     });
   });
+
+  // ESC key to exit Cinema Mode
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && STATE.isCinemaMode) {
+      closeCinemaMode();
+    }
+  });
 }
 
-// Start
+// Start Application
 document.addEventListener('DOMContentLoaded', init);
