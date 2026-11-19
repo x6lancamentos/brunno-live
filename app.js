@@ -1,5 +1,15 @@
 import { CATALOG, DEVOTIONALS } from './catalog.js';
 
+function trackGA(eventName, params = {}) {
+  if (typeof window.gtag === 'function') {
+    try {
+      window.gtag('event', eventName, params);
+    } catch (e) {}
+  }
+}
+
+let searchTrackTimer = null;
+
 // Application State
 const STATE = {
   currentEpisode: null,
@@ -201,6 +211,12 @@ function onPlayerStateChange(event) {
 // When video finishes playing
 function handleVideoEnded() {
   if (!STATE.currentEpisode) return;
+
+  trackGA('video_complete', {
+    episode_id: STATE.currentEpisode.id,
+    episode_title: STATE.currentEpisode.title,
+    series_name: STATE.currentCategory?.title || ''
+  });
 
   // 1. Mark as Watched automatically!
   markAsWatched(STATE.currentEpisode.id, true);
@@ -543,6 +559,20 @@ function renderDevotionals() {
       }
     });
   });
+
+  // Attach devotional PDF download tracking
+  DOM.devotionalsGrid.querySelectorAll('.btn-dev-download').forEach(link => {
+    link.addEventListener('click', () => {
+      const card = link.closest('.devotional-card');
+      const devTitle = card ? card.querySelector('.devotional-title')?.textContent?.trim() : 'Devocional PDF';
+      trackGA('file_download', {
+        file_name: devTitle || 'Devocional PDF',
+        file_extension: 'pdf',
+        content_type: 'devocional_live',
+        transport_type: 'beacon'
+      });
+    });
+  });
 }
 
 // =========================================================================
@@ -552,6 +582,12 @@ function openCinemaMode(episode, category, startTime = 0) {
   STATE.currentEpisode = episode;
   STATE.currentCategory = category;
   STATE.isCinemaMode = true;
+
+  trackGA('video_start', {
+    episode_id: episode.id,
+    episode_title: episode.title,
+    series_name: category?.title || ''
+  });
 
   cancelAutoplayTimer();
 
@@ -606,8 +642,17 @@ function openCinemaMode(episode, category, startTime = 0) {
     DOM.cinemaPdfTitle.textContent = episode.pdfMaterial.title;
     DOM.cinemaPdfDesc.textContent = episode.pdfMaterial.subtitle;
     DOM.cinemaPdfBtn.href = episode.pdfMaterial.downloadUrl;
+    DOM.cinemaPdfBtn.onclick = () => {
+      trackGA('file_download', {
+        file_name: episode.pdfMaterial.title,
+        file_extension: 'pdf',
+        content_type: 'devocional_live',
+        transport_type: 'beacon'
+      });
+    };
   } else {
     DOM.cinemaPdfContainer.style.display = 'none';
+    DOM.cinemaPdfBtn.onclick = null;
   }
 
   // 9. Scripture Card
@@ -947,6 +992,7 @@ function renderWatchlistView() {
 // =========================================================================
 function handleSearch(query) {
   const q = query.trim().toLowerCase();
+  clearTimeout(searchTrackTimer);
   if (!q) {
     DOM.searchResultsSection.style.display = 'none';
     DOM.catalogContainer.style.display = 'flex';
@@ -974,6 +1020,15 @@ function handleSearch(query) {
       }
     });
   });
+
+  if (q.length >= 3) {
+    searchTrackTimer = setTimeout(() => {
+      trackGA('search', {
+        search_term: q.slice(0, 80),
+        results_count: matches.length
+      });
+    }, 800);
+  }
 
   if (matches.length === 0) {
     DOM.searchGrid.innerHTML = `
@@ -1015,6 +1070,13 @@ function attachGridListeners(container) {
 
 // 1-Click WhatsApp & Social Share
 function shareEpisode(episode) {
+  trackGA('share', {
+    method: 'whatsapp',
+    content_type: 'episode',
+    item_id: episode.id,
+    episode_title: episode.title
+  });
+
   const shareUrl = `${window.location.origin}${window.location.pathname}#assistir/${episode.id}`;
   const shareText = `🕊️ *${episode.day} — ${episode.title}*\n\nAssista à ministração profética com o Pr. Brunno Anastácio e baixe o Devocional em PDF:\n\n${shareUrl}`;
 
@@ -1086,6 +1148,16 @@ function setupEventListeners() {
   // Mobile Menu
   DOM.mobileToggle.addEventListener('click', () => {
     DOM.navMenu.classList.toggle('open');
+  });
+
+  // Altar de Oração CTA
+  document.querySelectorAll('.btn-altar').forEach(btn => {
+    btn.addEventListener('click', () => {
+      trackGA('altar_oracao_click', {
+        cta_location: 'brunno_live_navbar',
+        transport_type: 'beacon'
+      });
+    });
   });
 
   // Search input
